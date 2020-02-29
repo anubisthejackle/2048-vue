@@ -3705,6 +3705,10 @@ video {
   font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+.font-font-2048 {
+  font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+}
+
 .font-hairline {
   font-weight: 100;
 }
@@ -11124,6 +11128,10 @@ video {
   font-size: 4rem;
 }
 
+.text-7xl {
+  font-size: 80px;
+}
+
 .italic {
   font-style: italic;
 }
@@ -17046,6 +17054,10 @@ video {
 
   .sm\:font-mono {
     font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+
+  .sm\:font-font-2048 {
+    font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
   }
 
   .sm\:font-hairline {
@@ -24467,6 +24479,10 @@ video {
     font-size: 4rem;
   }
 
+  .sm\:text-7xl {
+    font-size: 80px;
+  }
+
   .sm\:italic {
     font-style: italic;
   }
@@ -30390,6 +30406,10 @@ video {
 
   .md\:font-mono {
     font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+
+  .md\:font-font-2048 {
+    font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
   }
 
   .md\:font-hairline {
@@ -37811,6 +37831,10 @@ video {
     font-size: 4rem;
   }
 
+  .md\:text-7xl {
+    font-size: 80px;
+  }
+
   .md\:italic {
     font-style: italic;
   }
@@ -43734,6 +43758,10 @@ video {
 
   .lg\:font-mono {
     font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+
+  .lg\:font-font-2048 {
+    font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
   }
 
   .lg\:font-hairline {
@@ -51155,6 +51183,10 @@ video {
     font-size: 4rem;
   }
 
+  .lg\:text-7xl {
+    font-size: 80px;
+  }
+
   .lg\:italic {
     font-style: italic;
   }
@@ -57078,6 +57110,10 @@ video {
 
   .xl\:font-mono {
     font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+
+  .xl\:font-font-2048 {
+    font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
   }
 
   .xl\:font-hairline {
@@ -64497,6 +64533,10 @@ video {
 
   .xl\:text-6xl {
     font-size: 4rem;
+  }
+
+  .xl\:text-7xl {
+    font-size: 80px;
   }
 
   .xl\:italic {
