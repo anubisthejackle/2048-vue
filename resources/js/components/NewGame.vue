@@ -1,7 +1,7 @@
 <template>
-    <span class="text-center align-middle rounded ml-3 pl-3 pr-3 pt-2 pb-2 h-auto" style="background:#8f7a66;">
-        <div class="font-semibold text-white text-lg"><slot></slot></div>
-    </span>
+    <div class="text-center align-middle rounded pl-5 pr-5 pt-2 pb-2 h-auto" style="background:#8f7a66;">
+        <span class="font-semibold text-white text-lg"><slot></slot></span>
+    </div>
 </template>
 
 <script>

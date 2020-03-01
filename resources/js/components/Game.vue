@@ -8,7 +8,7 @@
                 <score-holder scoreName="Best">{{ bestScore }}</score-holder> <!-- Best Container -->
             </div>
         </div>
-        <div class="flex items-center align-middle">
+        <div class="flex items-center align-middle justify-between">
             <div class="text-lg">Join the numbers and get to the <span class="font-semibold">2048 tile!</span></div>
             <new-game>New Game</new-game>
         </div>
@@ -28,8 +28,8 @@
         },
         data() {
             return {
-                currentScore: 10000,
-                bestScore: 10000
+                currentScore: 1796,
+                bestScore: 16396
             }
         }
     }

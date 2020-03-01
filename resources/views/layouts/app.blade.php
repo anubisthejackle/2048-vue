@@ -19,7 +19,7 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
-<body class="bg-orange-100">
+<body class="bg-orange-100 mt-20">
     <div id="app" class="min-h-screen">
         <main class="flex items-center justify-center">
             @yield('content')
