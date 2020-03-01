@@ -13,6 +13,11 @@
             <new-game>New Game</new-game>
         </div>
         <GameBoard />
+        <div>
+            <div><!-- HOW TO PLAY --></div>
+            <hr />
+            <div><!-- Credit to Gabriele Cirulli --></div>
+        </div>
     </div>
 </template>
 
@@ -28,7 +33,7 @@
         },
         data() {
             return {
-                currentScore: 1796,
+                currentScore: 0,
                 bestScore: 16396
             }
         }

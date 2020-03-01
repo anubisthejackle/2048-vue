@@ -1,6 +1,6 @@
 <template>
     <div class="grid-row">
-        <grid-cell v-for="i in 4" />
+        <grid-cell v-for="(i,index) in 4" :key="index" />
     </div>
 </template>
 

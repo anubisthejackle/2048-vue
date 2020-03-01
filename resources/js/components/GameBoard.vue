@@ -3,9 +3,10 @@
         <!-- Game Message -->
         <div></div>
         <div class="grid-container">
-            <grid-row v-for="x in 4" />
+            <grid-row v-for="(x,index) in 4" :key="index" />
         </div>
         <div class="tile-container">
+            <tile v-for="(tile, index) in tiles" :key="index" :tileValue="tile.tileValue" :tileColumn="tile.tileColumn" :tileRow="tile.tileRow"></tile>
         </div>
     </div>
 </template>
@@ -45,14 +46,47 @@
 
 <script>
 import GridRow from './GridRow.vue';
+import Tile from './Tile.vue';
+
 export default {
     components: {
-        'grid-row': GridRow
+        'grid-row': GridRow,
+        'tile': Tile
     },
     data() {
         return {
-
+            tiles: [
+                {
+                    tileValue: 2,
+                    tileColumn: 1,
+                    tileRow: 1
+                },
+                {
+                    tileValue: 2,
+                    tileColumn: 3,
+                    tileRow: 2
+                },
+                {
+                    tileValue: 4,
+                    tileColumn: 4,
+                    tileRow: 4
+                }
+            ]
         }
+    },
+    methods:{
+        moveLeft: function(){
+            console.log("Left Arrow Pressed");
+        },
+        moveRight: function(){
+            console.log("Right Arrow Pressed");
+        },
+        moveUp: function(){
+            console.log("Up Arrow Pressed");
+        },
+        moveDown: function(){
+            console.log("Down Arrow Pressed");
+        },
     }
 }
 </script>
