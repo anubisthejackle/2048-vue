@@ -1,13 +1,58 @@
 <template>
-    <div class="mt-10 rounded-lg flex flex-wrap" style="background:#bbada0; height: 500px; width: 500px;">
-        <div v-for="x in 4" class="w-full flex flex-row">
-            <div v-for="i in 4" class="m-3 p-4 overflow-hidden rounded w-1/5 min-w-0" style="background:rgba(238, 228, 218, 0.35);">&nbsp;</div>
+    <div class="game-container">
+        <!-- Game Message -->
+        <div></div>
+        <div class="grid-container">
+            <grid-row v-for="x in 4" />
+        </div>
+        <div class="tile-container">
         </div>
     </div>
 </template>
 
-<script>
-    export default {
-        props: [''],
+<style scoped>
+    .game-container {
+        margin-top: 40px;
+        position: relative;
+        padding: 15px;
+        cursor: default;
+        -webkit-touch-callout: none;
+        -ms-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -ms-touch-action: none;
+        touch-action: none;
+        background: #bbada0;
+        border-radius: 6px;
+        width: 500px;
+        height: 500px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
     }
+
+    .grid-container {
+        position: absolute;
+        z-index: 1;
+    }
+
+    .tile-container {
+        position: absolute;
+        z-index: 2;
+    }
+</style>
+
+<script>
+import GridRow from './GridRow.vue';
+export default {
+    components: {
+        'grid-row': GridRow
+    },
+    data() {
+        return {
+
+        }
+    }
+}
 </script>
