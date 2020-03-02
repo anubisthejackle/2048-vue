@@ -1,6 +1,50 @@
 /******/ (function(modules) { // webpackBootstrap
+/******/ 	// install a JSONP callback for chunk loading
+/******/ 	function webpackJsonpCallback(data) {
+/******/ 		var chunkIds = data[0];
+/******/ 		var moreModules = data[1];
+/******/
+/******/
+/******/ 		// add "moreModules" to the modules object,
+/******/ 		// then flag all "chunkIds" as loaded and fire callback
+/******/ 		var moduleId, chunkId, i = 0, resolves = [];
+/******/ 		for(;i < chunkIds.length; i++) {
+/******/ 			chunkId = chunkIds[i];
+/******/ 			if(Object.prototype.hasOwnProperty.call(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 				resolves.push(installedChunks[chunkId][0]);
+/******/ 			}
+/******/ 			installedChunks[chunkId] = 0;
+/******/ 		}
+/******/ 		for(moduleId in moreModules) {
+/******/ 			if(Object.prototype.hasOwnProperty.call(moreModules, moduleId)) {
+/******/ 				modules[moduleId] = moreModules[moduleId];
+/******/ 			}
+/******/ 		}
+/******/ 		if(parentJsonpFunction) parentJsonpFunction(data);
+/******/
+/******/ 		while(resolves.length) {
+/******/ 			resolves.shift()();
+/******/ 		}
+/******/
+/******/ 	};
+/******/
+/******/
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
+/******/
+/******/ 	// object to store loaded and loading chunks
+/******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 	// Promise = chunk loading, 0 = chunk loaded
+/******/ 	var installedChunks = {
+/******/ 		"/js/app": 0
+/******/ 	};
+/******/
+/******/
+/******/
+/******/ 	// script path function
+/******/ 	function jsonpScriptSrc(chunkId) {
+/******/ 		return __webpack_require__.p + "" + ({}[chunkId]||chunkId) + ".js"
+/******/ 	}
 /******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
@@ -26,6 +70,67 @@
 /******/ 		return module.exports;
 /******/ 	}
 /******/
+/******/ 	// This file contains only the entry chunk.
+/******/ 	// The chunk loading function for additional chunks
+/******/ 	__webpack_require__.e = function requireEnsure(chunkId) {
+/******/ 		var promises = [];
+/******/
+/******/
+/******/ 		// JSONP chunk loading for javascript
+/******/
+/******/ 		var installedChunkData = installedChunks[chunkId];
+/******/ 		if(installedChunkData !== 0) { // 0 means "already installed".
+/******/
+/******/ 			// a Promise means "currently loading".
+/******/ 			if(installedChunkData) {
+/******/ 				promises.push(installedChunkData[2]);
+/******/ 			} else {
+/******/ 				// setup Promise in chunk cache
+/******/ 				var promise = new Promise(function(resolve, reject) {
+/******/ 					installedChunkData = installedChunks[chunkId] = [resolve, reject];
+/******/ 				});
+/******/ 				promises.push(installedChunkData[2] = promise);
+/******/
+/******/ 				// start chunk loading
+/******/ 				var script = document.createElement('script');
+/******/ 				var onScriptComplete;
+/******/
+/******/ 				script.charset = 'utf-8';
+/******/ 				script.timeout = 120;
+/******/ 				if (__webpack_require__.nc) {
+/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
+/******/ 				}
+/******/ 				script.src = jsonpScriptSrc(chunkId);
+/******/
+/******/ 				// create error before stack unwound to get useful stacktrace later
+/******/ 				var error = new Error();
+/******/ 				onScriptComplete = function (event) {
+/******/ 					// avoid mem leaks in IE.
+/******/ 					script.onerror = script.onload = null;
+/******/ 					clearTimeout(timeout);
+/******/ 					var chunk = installedChunks[chunkId];
+/******/ 					if(chunk !== 0) {
+/******/ 						if(chunk) {
+/******/ 							var errorType = event && (event.type === 'load' ? 'missing' : event.type);
+/******/ 							var realSrc = event && event.target && event.target.src;
+/******/ 							error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
+/******/ 							error.name = 'ChunkLoadError';
+/******/ 							error.type = errorType;
+/******/ 							error.request = realSrc;
+/******/ 							chunk[1](error);
+/******/ 						}
+/******/ 						installedChunks[chunkId] = undefined;
+/******/ 					}
+/******/ 				};
+/******/ 				var timeout = setTimeout(function(){
+/******/ 					onScriptComplete({ type: 'timeout', target: script });
+/******/ 				}, 120000);
+/******/ 				script.onerror = script.onload = onScriptComplete;
+/******/ 				document.head.appendChild(script);
+/******/ 			}
+/******/ 		}
+/******/ 		return Promise.all(promises);
+/******/ 	};
 /******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
@@ -78,6 +183,16 @@
 /******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "/";
+/******/
+/******/ 	// on error function for async loading
+/******/ 	__webpack_require__.oe = function(err) { console.error(err); throw err; };
+/******/
+/******/ 	var jsonpArray = window["webpackJsonp"] = window["webpackJsonp"] || [];
+/******/ 	var oldJsonpFunction = jsonpArray.push.bind(jsonpArray);
+/******/ 	jsonpArray.push = webpackJsonpCallback;
+/******/ 	jsonpArray = jsonpArray.slice();
+/******/ 	for(var i = 0; i < jsonpArray.length; i++) webpackJsonpCallback(jsonpArray[i]);
+/******/ 	var parentJsonpFunction = oldJsonpFunction;
 /******/
 /******/
 /******/ 	// Load entry module and return exports
@@ -1964,6 +2079,22 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _GridRow_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./GridRow.vue */ "./resources/js/components/GridRow.vue");
 /* harmony import */ var _Tile_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Tile.vue */ "./resources/js/components/Tile.vue");
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2015,37 +2146,262 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     'grid-row': _GridRow_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
-    'tile': _Tile_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+    'tile': _Tile_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    Keypress: function Keypress() {
+      return __webpack_require__.e(/*! import() */ 0).then(__webpack_require__.t.bind(null, /*! vue-keypress */ "./node_modules/vue-keypress/dist/Keypress.umd.js", 7));
+    }
   },
   data: function data() {
     return {
-      tiles: [{
-        tileValue: 2,
-        tileColumn: 1,
-        tileRow: 1
-      }, {
-        tileValue: 2,
-        tileColumn: 3,
-        tileRow: 2
-      }, {
-        tileValue: 4,
-        tileColumn: 4,
-        tileRow: 4
-      }]
+      tiles: [[2, 0, 0, 2], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
     };
   },
   methods: {
     moveLeft: function moveLeft() {
       console.log("Left Arrow Pressed");
+      var moved,
+          everMoved = false;
+      var tileRow;
+
+      do {
+        moved = false;
+
+        for (var rowIndex = 0, length = this.tiles.length; rowIndex < length; rowIndex++) {
+          // We are moving things from right to left, so we process from left to Right.
+          // This way we can merge easier, without needing to "look ahead"
+          tileRow = this.tiles[rowIndex];
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
+
+          try {
+            for (var _iterator = tileRow.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var _step$value = _slicedToArray(_step.value, 2),
+                  index = _step$value[0],
+                  tile = _step$value[1];
+
+              // If the tile is empty, or we're at the left edge, skip.
+              if (tile == 0 || index == 0) {
+                continue;
+              }
+
+              if (tileRow[index - 1] == 0) {
+                // The space is empty, let's move there.
+                tileRow[index - 1] = tile;
+                tileRow[index] = 0;
+                moved = true;
+                everMoved = true;
+                continue;
+              }
+
+              if (tileRow[index - 1] == tile) {
+                // Merge opportunity!
+                tileRow[index - 1] = tile + tile;
+                tileRow[index] = 0; // this.$set(this.tiles, rowIndex, tileRow);
+
+                moved = true;
+                everMoved = true;
+                continue;
+              }
+            }
+          } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+                _iterator["return"]();
+              }
+            } finally {
+              if (_didIteratorError) {
+                throw _iteratorError;
+              }
+            }
+          }
+
+          this.$set(this.tiles, rowIndex, tileRow);
+        }
+      } while (moved == true);
+
+      if (everMoved) {
+        this.generateRandomTile();
+      }
     },
     moveRight: function moveRight() {
       console.log("Right Arrow Pressed");
+      var moved,
+          everMoved = false;
+      var tileRow;
+
+      do {
+        moved = false;
+
+        for (var rowIndex = 0, length = this.tiles.length; rowIndex < length; rowIndex++) {
+          // We are moving things from right to left, so we process from left to Right.
+          // This way we can merge easier, without needing to "look ahead"
+          tileRow = this.tiles[rowIndex];
+
+          for (var colIndex = tileRow.length; colIndex >= 0; colIndex--) {
+            // If the tile is empty, or we're at the left edge, skip.
+            var tile = tileRow[colIndex];
+
+            if (tile == 0 || colIndex == tileRow.length) {
+              continue;
+            }
+
+            if (tileRow[colIndex + 1] == 0) {
+              // The space is empty, let's move there.
+              tileRow[colIndex + 1] = tile;
+              tileRow[colIndex] = 0;
+              moved = true;
+              everMoved = true;
+              continue;
+            }
+
+            if (tileRow[colIndex - 1] == tile) {
+              // Merge opportunity!
+              tileRow[colIndex - 1] = tile + tile;
+              tileRow[colIndex] = 0;
+              moved = true;
+              everMoved = true;
+              continue;
+            }
+          }
+
+          this.$set(this.tiles, rowIndex, tileRow);
+        }
+      } while (moved == true);
+
+      if (everMoved) {
+        this.generateRandomTile();
+      }
     },
     moveUp: function moveUp() {
       console.log("Up Arrow Pressed");
+      var moved,
+          everMoved = false;
+      var tileRow;
+      var tiles = this.tiles;
+      console.log(tiles);
+
+      do {
+        moved = false; // We're going top to bottom, so we want to move the things closest
+        // to the bottom first. That means begin looking at the bottom, and
+        // inch our way back up.
+
+        for (var rowIndex = 1; rowIndex < 4; rowIndex++) {
+          // Now we have a row to work with, so let's iterate over the columns.
+          // The order of these doesn't matter much.
+          for (var colIndex = 0; colIndex < 4; colIndex++) {
+            var tile = tiles[rowIndex][colIndex]; // We can't move the third row, so we skip it
+            // We could do this by starting the loop lower.
+
+            if (tile == 0 || rowIndex == 0) {
+              continue;
+            } // Check for an empty space directly below the tile
+
+
+            if (tiles[rowIndex - 1][colIndex] == 0) {
+              tiles[rowIndex - 1][colIndex] = tile;
+              tiles[rowIndex][colIndex] = 0;
+              moved = true;
+              everMoved = true;
+              continue;
+            } // Check for merge
+
+
+            if (tiles[rowIndex - 1][colIndex] == tile) {
+              tiles[rowIndex - 1][colIndex] = tile + tile;
+              tiles[rowIndex][colIndex] = 0;
+              moved = true;
+              everMoved = true;
+              continue;
+            }
+          }
+        }
+      } while (moved == true);
+
+      this.$set(this.tiles, 0, tiles[0]);
+      this.$set(this.tiles, 1, tiles[1]);
+      this.$set(this.tiles, 2, tiles[2]);
+      this.$set(this.tiles, 3, tiles[3]);
+
+      if (everMoved) {
+        this.generateRandomTile();
+      }
     },
     moveDown: function moveDown() {
       console.log("Down Arrow Pressed");
+      var moved,
+          everMoved = false;
+      var tileRow;
+      var tiles = this.tiles;
+      console.log(tiles);
+
+      do {
+        moved = false; // We're going top to bottom, so we want to move the things closest
+        // to the bottom first. That means begin looking at the bottom, and
+        // inch our way back up.
+
+        for (var rowIndex = 3; rowIndex >= 0; rowIndex--) {
+          // Now we have a row to work with, so let's iterate over the columns.
+          // The order of these doesn't matter much.
+          for (var colIndex = 0; colIndex < 4; colIndex++) {
+            var tile = tiles[rowIndex][colIndex]; // We can't move the third row, so we skip it
+            // We could do this by starting the loop lower.
+
+            if (tile == 0 || rowIndex == 3) {
+              continue;
+            } // Check for an empty space directly below the tile
+
+
+            if (tiles[rowIndex + 1][colIndex] == 0) {
+              tiles[rowIndex + 1][colIndex] = tile;
+              tiles[rowIndex][colIndex] = 0;
+              moved = true;
+              everMoved = true;
+              continue;
+            } // Check for merge
+
+
+            if (tiles[rowIndex + 1][colIndex] == tile) {
+              tiles[rowIndex + 1][colIndex] = tile + tile;
+              tiles[rowIndex][colIndex] = 0;
+              moved = true;
+              everMoved = true;
+              continue;
+            }
+          }
+        }
+      } while (moved == true);
+
+      this.$set(this.tiles, 0, tiles[0]);
+      this.$set(this.tiles, 1, tiles[1]);
+      this.$set(this.tiles, 2, tiles[2]);
+      this.$set(this.tiles, 3, tiles[3]);
+
+      if (everMoved) {
+        this.generateRandomTile();
+      }
+    },
+    generateRandomTile: function generateRandomTile() {
+      var empties = [];
+      var row, column;
+
+      for (row = 0; row < 4; row++) {
+        for (column = 0; column < 4; column++) {
+          if (this.tiles[row][column] == 0) {
+            empties.push({
+              row: row,
+              column: column
+            });
+          }
+        }
+      }
+
+      var randomItem = empties[Math.floor(Math.random() * empties.length)];
+      var value = Math.random() < 0.9 ? 2 : 4;
+      this.$set(this.tiles[randomItem.row], randomItem.column, value);
     }
   }
 });
@@ -2337,6 +2693,17 @@ __webpack_require__.r(__webpack_exports__);
     },
     dynamicClass: function dynamicClass() {
       return "tile-" + this.tileValue;
+    }
+  },
+  watch: {
+    tileValue: function tileValue(newVal, oldVal) {
+      console.log("Tile Value changed from " + oldVal + " to " + newVal);
+    },
+    tileColumn: function tileColumn(newVal, oldVal) {
+      console.log("Tile Column changed from " + oldVal + " to " + newVal);
+    },
+    tileRow: function tileRow(newVal, oldVal) {
+      console.log("Tile Row changed from " + oldVal + " to " + newVal);
     }
   }
 });
@@ -38629,34 +38996,69 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "game-container" }, [
-    _c("div"),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "grid-container" },
-      _vm._l(4, function(x, index) {
-        return _c("grid-row", { key: index })
+  return _c(
+    "div",
+    { staticClass: "game-container" },
+    [
+      _c("div"),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "grid-container" },
+        _vm._l(4, function(x, index) {
+          return _c("grid-row", { key: index })
+        }),
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "tile-container" },
+        [
+          _vm._l(_vm.tiles, function(columns, row) {
+            return [
+              _vm._l(columns, function(tile, column) {
+                return [
+                  _vm.tiles[row][column] > 0
+                    ? _c("tile", {
+                        key: row + ":" + column,
+                        attrs: {
+                          tileValue: _vm.tiles[row][column],
+                          tileColumn: column + 1,
+                          tileRow: row + 1
+                        }
+                      })
+                    : _vm._e()
+                ]
+              })
+            ]
+          })
+        ],
+        2
+      ),
+      _vm._v(" "),
+      _c("Keypress", {
+        attrs: { "key-code": 38, event: "keyup" },
+        on: { pressed: _vm.moveUp }
       }),
-      1
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "tile-container" },
-      _vm._l(_vm.tiles, function(tile, index) {
-        return _c("tile", {
-          key: index,
-          attrs: {
-            tileValue: tile.tileValue,
-            tileColumn: tile.tileColumn,
-            tileRow: tile.tileRow
-          }
-        })
+      _vm._v(" "),
+      _c("Keypress", {
+        attrs: { "key-code": 37, event: "keyup" },
+        on: { pressed: _vm.moveLeft }
       }),
-      1
-    )
-  ])
+      _vm._v(" "),
+      _c("Keypress", {
+        attrs: { "key-code": 39, event: "keyup" },
+        on: { pressed: _vm.moveRight }
+      }),
+      _vm._v(" "),
+      _c("Keypress", {
+        attrs: { "key-code": 40, event: "keyup" },
+        on: { pressed: _vm.moveDown }
+      })
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -51019,22 +51421,14 @@ Vue.component('game', __webpack_require__(/*! ./components/Game.vue */ "./resour
 
 var app = new Vue({
   el: '#app',
-  data: {
-    keyCode: ''
-  },
-  methods: {
-    updateKeyCode: function updateKeyCode(keyCode) {
-      console.log("Running update key code");
-      console.log(keyCode);
-      this.keyCode = keyCode;
-    }
-  },
-  mounted: function mounted() {
-    window.addEventListener('keyup', function (e) {
-      this.updateKeyCode(e.keyCode);
-    });
-  }
+  data: {}
 });
+window.addEventListener("keydown", function (e) {
+  // space and arrow keys
+  if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+    e.preventDefault();
+  }
+}, false);
 
 /***/ }),
 

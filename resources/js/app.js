@@ -29,19 +29,11 @@ Vue.component('game', require('./components/Game.vue').default);
 
 const app = new Vue({
     el: '#app',
-    data: {
-        keyCode: ''
-    },
-    methods: {
-        updateKeyCode: function(keyCode) {
-            console.log("Running update key code");
-            console.log(keyCode);
-            this.keyCode = keyCode;
-        }
-    },
-    mounted: function() {
-        window.addEventListener('keyup', function(e){
-            this.updateKeyCode(e.keyCode);
-        });
-    }
+    data: {}
 });
+window.addEventListener("keydown", function(e) {
+    // space and arrow keys
+    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();
+    }
+}, false);
