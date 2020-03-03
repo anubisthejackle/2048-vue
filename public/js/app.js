@@ -2310,20 +2310,29 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
             if (tileRow[colIndex - 1] == tile) {
               this.tileObjs.map(function (value) {
-                if (this.row != value.row || this.column != value.column) {
-                  // Not the tile we want
+                if (value.row != this.row || value.value == 0) {
+                  // If it's not the right row, we can ignore it.
                   return value;
                 }
 
-                value.column++;
-                value.value = value.value + value.value;
+                if (value.column == this.column + 1) {
+                  // This is the one we are colliding into
+                  value.value = 0;
+                }
+
+                if (value.column == this.column) {
+                  // This is the one we are moving
+                  value.column++;
+                  value.value = value.value + value.value;
+                }
+
                 return value;
               }, {
                 row: rowIndex + 1,
                 column: colIndex + 1
               }); // Merge opportunity!
 
-              tileRow[colIndex - 1] = tile + tile;
+              tileRow[colIndex + 1] = tile + tile;
               tileRow[colIndex] = 0;
               moved = true;
               everMoved = true;
@@ -2387,19 +2396,27 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
             if (tiles[rowIndex - 1][colIndex] == tile) {
-              // DO THE ANIMATION
               this.tileObjs.map(function (value) {
-                if (this.row != value.row || this.column != value.column) {
-                  // Not the tile we want
+                if (value.column != this.column || value.value == 0) {
+                  // If it's not the right row, we can ignore it.
                   return value;
                 }
 
-                value.row--;
-                value.value = value.value + value.value;
+                if (value.row == this.row) {
+                  // This is the one we are colliding into
+                  value.value = 0;
+                }
+
+                if (value.row == this.row + 1) {
+                  // This is the one we are moving
+                  value.row--;
+                  value.value = value.value + value.value;
+                }
+
                 return value;
               }, {
-                row: rowIndex + 1,
-                column: colIndex + 1
+                row: rowIndex,
+                column: colIndex
               });
               tiles[rowIndex - 1][colIndex] = tile + tile;
               tiles[rowIndex][colIndex] = 0;
@@ -2468,17 +2485,26 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
             if (tiles[rowIndex + 1][colIndex] == tile) {
               this.tileObjs.map(function (value) {
-                if (this.row != value.row || this.column != value.column) {
-                  // Not the tile we want
+                if (value.column != this.column || value.value == 0) {
+                  // If it's not the right row, we can ignore it.
                   return value;
                 }
 
-                value.row++;
-                value.value = value.value + value.value;
+                if (value.row == this.row + 1) {
+                  // This is the one we are colliding into
+                  value.value = 0;
+                }
+
+                if (value.row == this.row) {
+                  // This is the one we are moving
+                  value.row++;
+                  value.value = value.value + value.value;
+                }
+
                 return value;
               }, {
                 row: rowIndex + 1,
-                column: colIndex + 1
+                column: colIndex
               });
               tiles[rowIndex + 1][colIndex] = tile + tile;
               tiles[rowIndex][colIndex] = 0;
