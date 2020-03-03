@@ -8,10 +8,10 @@
         <div class="tile-container">
             <tile v-for="(tile,index) in tileObjs" :key="index" :tileValue="tile.value" :tileColumn="tile.column" :tileRow="tile.row"></tile>
         </div>
-        <Keypress :key-code="38" event="keyup" @pressed="moveUp" />
-        <Keypress :key-code="37" event="keyup" @pressed="moveLeft" />
-        <Keypress :key-code="39" event="keyup" @pressed="moveRight" />
-        <Keypress :key-code="40" event="keyup" @pressed="moveDown" />
+        <Keypress v-if="gameOver == false" :key-code="38" event="keyup" @pressed="moveUp" />
+        <Keypress v-if="gameOver == false" :key-code="37" event="keyup" @pressed="moveLeft" />
+        <Keypress v-if="gameOver == false" :key-code="39" event="keyup" @pressed="moveRight" />
+        <Keypress v-if="gameOver == false" :key-code="40" event="keyup" @pressed="moveDown" />
     </div>
 </template>
 
@@ -67,7 +67,8 @@ export default {
                     [0,0,0,0],
                     [0,0,0,0],
                     [0,0,0,0]
-           ]
+           ],
+           gameOver: false
         }
     },
     mounted() {
@@ -76,7 +77,7 @@ export default {
     },
     methods:{
         moveLeft: function(){
-            // console.log("Left Arrow Pressed");
+            console.log("Left Arrow Pressed");
             var moved, everMoved = false;
             var tileRow;
             do{
@@ -393,6 +394,7 @@ export default {
             if(!this.moveAvailable()){
                 // Game over!
                 console.log("Game Over");
+                this.gameOver = true;
             }
         },
         moveAvailable:function() {

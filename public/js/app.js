@@ -2150,7 +2150,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
   data: function data() {
     return {
       tileObjs: [],
-      tiles: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+      tiles: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+      gameOver: false
     };
   },
   mounted: function mounted() {
@@ -2159,7 +2160,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
   },
   methods: {
     moveLeft: function moveLeft() {
-      // console.log("Left Arrow Pressed");
+      console.log("Left Arrow Pressed");
       var moved,
           everMoved = false;
       var tileRow;
@@ -2534,6 +2535,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       if (!this.moveAvailable()) {
         // Game over!
         console.log("Game Over");
+        this.gameOver = true;
       }
     },
     moveAvailable: function moveAvailable() {
@@ -39184,25 +39186,33 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c("Keypress", {
-        attrs: { "key-code": 38, event: "keyup" },
-        on: { pressed: _vm.moveUp }
-      }),
+      _vm.gameOver == false
+        ? _c("Keypress", {
+            attrs: { "key-code": 38, event: "keyup" },
+            on: { pressed: _vm.moveUp }
+          })
+        : _vm._e(),
       _vm._v(" "),
-      _c("Keypress", {
-        attrs: { "key-code": 37, event: "keyup" },
-        on: { pressed: _vm.moveLeft }
-      }),
+      _vm.gameOver == false
+        ? _c("Keypress", {
+            attrs: { "key-code": 37, event: "keyup" },
+            on: { pressed: _vm.moveLeft }
+          })
+        : _vm._e(),
       _vm._v(" "),
-      _c("Keypress", {
-        attrs: { "key-code": 39, event: "keyup" },
-        on: { pressed: _vm.moveRight }
-      }),
+      _vm.gameOver == false
+        ? _c("Keypress", {
+            attrs: { "key-code": 39, event: "keyup" },
+            on: { pressed: _vm.moveRight }
+          })
+        : _vm._e(),
       _vm._v(" "),
-      _c("Keypress", {
-        attrs: { "key-code": 40, event: "keyup" },
-        on: { pressed: _vm.moveDown }
-      })
+      _vm.gameOver == false
+        ? _c("Keypress", {
+            attrs: { "key-code": 40, event: "keyup" },
+            on: { pressed: _vm.moveDown }
+          })
+        : _vm._e()
     ],
     1
   )
