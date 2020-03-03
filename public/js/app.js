@@ -2279,11 +2279,11 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
           // This way we can merge easier, without needing to "look ahead"
           tileRow = this.tiles[rowIndex];
 
-          for (var colIndex = tileRow.length; colIndex >= 0; colIndex--) {
+          for (var colIndex = tileRow.length - 1; colIndex >= 0; colIndex--) {
             // If the tile is empty, or we're at the left edge, skip.
             var tile = tileRow[colIndex];
 
-            if (tile == 0 || colIndex == tileRow.length) {
+            if (tile == 0 || colIndex == tileRow.length - 1) {
               continue;
             }
 
@@ -2308,7 +2308,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
               continue;
             }
 
-            if (tileRow[colIndex - 1] == tile) {
+            if (tileRow[colIndex + 1] == tile) {
               this.tileObjs.map(function (value) {
                 if (value.row != this.row || value.value == 0) {
                   // If it's not the right row, we can ignore it.
@@ -2485,6 +2485,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
             if (tiles[rowIndex + 1][colIndex] == tile) {
               this.tileObjs.map(function (value) {
+                console.log(this);
+
                 if (value.column != this.column || value.value == 0) {
                   // If it's not the right row, we can ignore it.
                   return value;
@@ -2498,7 +2500,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
                 if (value.row == this.row) {
                   // This is the one we are moving
                   value.row++;
-                  value.value = value.value + value.value;
+                  value.value = value.value * 2;
                 }
 
                 return value;
