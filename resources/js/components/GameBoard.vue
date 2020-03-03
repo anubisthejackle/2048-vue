@@ -6,11 +6,7 @@
             <grid-row v-for="(x,index) in 4" :key="index" />
         </div>
         <div class="tile-container">
-            <template v-model="tiles" v-for="(columns, row) in tiles">
-                <template v-for="(tile, column) in columns">
-                    <tile :key="row+':'+column" v-if="tiles[row][column]>0" :tileValue="tiles[row][column]" :tileColumn="column+1" :tileRow="row+1"></tile>
-                </template>
-            </template>
+            <tile v-for="(tile,index) in tileObjs" :key="index" :tileValue="tile.value" :tileColumn="tile.column" :tileRow="tile.row"></tile>
         </div>
         <Keypress :key-code="38" event="keyup" @pressed="moveUp" />
         <Keypress :key-code="37" event="keyup" @pressed="moveLeft" />
@@ -64,13 +60,19 @@ export default {
     },
     data() {
         return {
+            tileObjs: [
+            ],
             tiles: [
-                    [2,0,0,2],
+                    [0,0,0,0],
                     [0,0,0,0],
                     [0,0,0,0],
                     [0,0,0,0]
            ]
         }
+    },
+    mounted() {
+        this.generateRandomTile();
+        this.generateRandomTile();
     },
     methods:{
         moveLeft: function(){
@@ -83,26 +85,50 @@ export default {
                     // We are moving things from right to left, so we process from left to Right.
                     // This way we can merge easier, without needing to "look ahead"
                     tileRow = this.tiles[rowIndex];
-                    for(let [index, tile] of tileRow.entries()){
+                    for(let [colIndex, tile] of tileRow.entries()){
                         // If the tile is empty, or we're at the left edge, skip.
-                        if(tile == 0 || index == 0){
+                        if(tile == 0 || colIndex == 0){
                             continue;
                         }
 
-                        if(tileRow[index-1] == 0){
+                        if(tileRow[colIndex-1] == 0){
                             // The space is empty, let's move there.
+                            this.tileObjs.map(function(value) {
+                                if( this.row != value.row || this.column != value.column ){
+                                    // Not the tile we want
+                                    return value;
+                                }
+                                value.column--;
+                                return value;
+                            }, {row: (rowIndex + 1), column: (colIndex+1)});
 
-                            tileRow[index-1] = tile;
-                            tileRow[index] = 0;
+                            tileRow[colIndex-1] = tile;
+                            tileRow[colIndex] = 0;
                             moved = true;
                             everMoved = true;
                             continue;
                         }
 
-                        if(tileRow[index-1] == tile){
+                        if(tileRow[colIndex-1] == tile){
+
+                            // This is the element we are sliding
+                            let collider = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
+                            }, {row: (rowIndex+1), column: (colIndex+1)});
+
+                            // This is the element we want to disappear
+                            let collided = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
+                            }, {row: (rowIndex+1), column: (colIndex)});
+
+                            this.tileObjs[collider].column--;
+                            this.tileObjs[collider].value *= 2;
+
+                            this.tileObjs[collided].value = 0;
+
                             // Merge opportunity!
-                            tileRow[index-1] = tile + tile;
-                            tileRow[index] = 0;
+                            tileRow[colIndex-1] = tile + tile;
+                            tileRow[colIndex] = 0;
                             // this.$set(this.tiles, rowIndex, tileRow);
                             moved = true;
                             everMoved = true;
@@ -127,15 +153,24 @@ export default {
                     // We are moving things from right to left, so we process from left to Right.
                     // This way we can merge easier, without needing to "look ahead"
                     tileRow = this.tiles[rowIndex];
-                    for(var colIndex = tileRow.length; colIndex >= 0; colIndex--){
+                    for(var colIndex = (tileRow.length - 1); colIndex >= 0; colIndex--){
                         // If the tile is empty, or we're at the left edge, skip.
                         let tile = tileRow[colIndex];
-                        if(tile == 0 || colIndex == tileRow.length){
+                        if(tile == 0 || colIndex == (tileRow.length - 1)){
                             continue;
                         }
 
                         if(tileRow[colIndex+1] == 0){
                             // The space is empty, let's move there.
+
+                            this.tileObjs.map(function(value) {
+                                if( this.row != value.row || this.column != value.column ){
+                                    // Not the tile we want
+                                    return value;
+                                }
+                                value.column++;
+                                return value;
+                            }, {row: (rowIndex + 1), column: (colIndex+1)});
 
                             tileRow[colIndex+1] = tile;
                             tileRow[colIndex] = 0;
@@ -144,9 +179,25 @@ export default {
                             continue;
                         }
 
-                        if(tileRow[colIndex-1] == tile){
+                        if(tileRow[colIndex+1] == tile){
+
+                            // This is the element we are sliding
+                            let collider = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
+                            }, {row: (rowIndex+1), column: (colIndex+1)});
+
+                            // This is the element we want to disappear
+                            let collided = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
+                            }, {row: (rowIndex+1), column: (colIndex+2)});
+
+                            this.tileObjs[collider].column++;
+                            this.tileObjs[collider].value *= 2;
+
+                            this.tileObjs[collided].value = 0;
+
                             // Merge opportunity!
-                            tileRow[colIndex-1] = tile + tile;
+                            tileRow[colIndex+1] = tile + tile;
                             tileRow[colIndex] = 0;
                             moved = true;
                             everMoved = true;
@@ -185,7 +236,18 @@ export default {
                         }
 
                         // Check for an empty space directly below the tile
-                        if( tiles[rowIndex - 1][colIndex] == 0) {
+                        if( tiles[rowIndex - 1][colIndex] === 0) {
+
+                            // DO THE ANIMATION
+                            this.tileObjs.map(function(value) {
+                                if( this.row != value.row || this.column != value.column ){
+                                    // Not the tile we want
+                                    return value;
+                                }
+                                value.row--;
+                                return value;
+                            }, {row: (rowIndex + 1), column: (colIndex+1)});
+
                             tiles[rowIndex - 1][colIndex] = tile;
                             tiles[rowIndex][colIndex] = 0;
                             moved = true;
@@ -195,6 +257,22 @@ export default {
 
                         // Check for merge
                         if( tiles[rowIndex - 1][colIndex] == tile) {
+
+                            // This is the element we are sliding
+                            let collider = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
+                            }, {row: (rowIndex+1), column: (colIndex+1)});
+
+                            // This is the element we want to disappear
+                            let collided = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
+                            }, {row: (rowIndex), column: (colIndex+1)});
+
+                            this.tileObjs[collider].row--;
+                            this.tileObjs[collider].value *= 2;
+
+                            this.tileObjs[collided].value = 0;
+
                             tiles[rowIndex - 1][colIndex] = tile + tile;
                             tiles[rowIndex][colIndex] = 0;
                             moved = true;
@@ -228,7 +306,7 @@ export default {
                     // Now we have a row to work with, so let's iterate over the columns.
                     // The order of these doesn't matter much.
                     for(let colIndex = 0; colIndex < 4; colIndex++){
-
+                        console.log(colIndex)
                         let tile = tiles[rowIndex][colIndex];
 
                         // We can't move the third row, so we skip it
@@ -239,6 +317,14 @@ export default {
 
                         // Check for an empty space directly below the tile
                         if( tiles[rowIndex + 1][colIndex] == 0) {
+                            this.tileObjs.map(function(value) {
+                                if( this.row != value.row || this.column != value.column ){
+                                    // Not the tile we want
+                                    return value;
+                                }
+                                value.row++;
+                                return value;
+                            }, {row: (rowIndex + 1), column: (colIndex+1)});
                             tiles[rowIndex + 1][colIndex] = tile;
                             tiles[rowIndex][colIndex] = 0;
                             moved = true;
@@ -248,6 +334,22 @@ export default {
 
                         // Check for merge
                         if( tiles[rowIndex + 1][colIndex] == tile) {
+
+                            // This is the element we are sliding
+                            let collider = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
+                            }, {row: (rowIndex+1), column: (colIndex+1)});
+
+                            // This is the element we want to disappear
+                            let collided = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
+                            }, {row: (rowIndex+2), column: (colIndex+1)});
+
+                            this.tileObjs[collider].row++;
+                            this.tileObjs[collider].value *= 2;
+
+                            this.tileObjs[collided].value = 0;
+
                             tiles[rowIndex + 1][colIndex] = tile + tile;
                             tiles[rowIndex][colIndex] = 0;
                             moved = true;
@@ -277,9 +379,14 @@ export default {
                 }
             }
 
+            if(empties.length == 0){
+                // END OF THE GAME
+                return;
+            }
             var randomItem = empties[Math.floor(Math.random()*empties.length)];
             var value = Math.random() < 0.9 ? 2 : 4;
             this.$set(this.tiles[randomItem.row], randomItem.column, value);
+            this.$set(this.tileObjs, this.tileObjs.length, {value: value, column:(randomItem.column+1), row:(randomItem.row+1)});
         }
     }
 }

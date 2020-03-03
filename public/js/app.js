@@ -2137,10 +2137,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 //
 //
 //
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2153,8 +2149,13 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
   },
   data: function data() {
     return {
-      tiles: [[2, 0, 0, 2], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+      tileObjs: [],
+      tiles: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
     };
+  },
+  mounted: function mounted() {
+    this.generateRandomTile();
+    this.generateRandomTile();
   },
   methods: {
     moveLeft: function moveLeft() {
@@ -2177,27 +2178,56 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
           try {
             for (var _iterator = tileRow.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
               var _step$value = _slicedToArray(_step.value, 2),
-                  index = _step$value[0],
+                  colIndex = _step$value[0],
                   tile = _step$value[1];
 
               // If the tile is empty, or we're at the left edge, skip.
-              if (tile == 0 || index == 0) {
+              if (tile == 0 || colIndex == 0) {
                 continue;
               }
 
-              if (tileRow[index - 1] == 0) {
+              if (tileRow[colIndex - 1] == 0) {
                 // The space is empty, let's move there.
-                tileRow[index - 1] = tile;
-                tileRow[index] = 0;
+                this.tileObjs.map(function (value) {
+                  if (this.row != value.row || this.column != value.column) {
+                    // Not the tile we want
+                    return value;
+                  }
+
+                  value.column--;
+                  return value;
+                }, {
+                  row: rowIndex + 1,
+                  column: colIndex + 1
+                });
+                tileRow[colIndex - 1] = tile;
+                tileRow[colIndex] = 0;
                 moved = true;
                 everMoved = true;
                 continue;
               }
 
-              if (tileRow[index - 1] == tile) {
-                // Merge opportunity!
-                tileRow[index - 1] = tile + tile;
-                tileRow[index] = 0; // this.$set(this.tiles, rowIndex, tileRow);
+              if (tileRow[colIndex - 1] == tile) {
+                // This is the element we are sliding
+                var collider = this.tileObjs.findIndex(function (tile) {
+                  return tile.row == this.row && tile.column == this.column && tile.value > 0;
+                }, {
+                  row: rowIndex + 1,
+                  column: colIndex + 1
+                }); // This is the element we want to disappear
+
+                var collided = this.tileObjs.findIndex(function (tile) {
+                  return tile.row == this.row && tile.column == this.column && tile.value > 0;
+                }, {
+                  row: rowIndex + 1,
+                  column: colIndex
+                });
+                this.tileObjs[collider].column--;
+                this.tileObjs[collider].value *= 2;
+                this.tileObjs[collided].value = 0; // Merge opportunity!
+
+                tileRow[colIndex - 1] = tile + tile;
+                tileRow[colIndex] = 0; // this.$set(this.tiles, rowIndex, tileRow);
 
                 moved = true;
                 everMoved = true;
@@ -2241,16 +2271,28 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
           // This way we can merge easier, without needing to "look ahead"
           tileRow = this.tiles[rowIndex];
 
-          for (var colIndex = tileRow.length; colIndex >= 0; colIndex--) {
+          for (var colIndex = tileRow.length - 1; colIndex >= 0; colIndex--) {
             // If the tile is empty, or we're at the left edge, skip.
             var tile = tileRow[colIndex];
 
-            if (tile == 0 || colIndex == tileRow.length) {
+            if (tile == 0 || colIndex == tileRow.length - 1) {
               continue;
             }
 
             if (tileRow[colIndex + 1] == 0) {
               // The space is empty, let's move there.
+              this.tileObjs.map(function (value) {
+                if (this.row != value.row || this.column != value.column) {
+                  // Not the tile we want
+                  return value;
+                }
+
+                value.column++;
+                return value;
+              }, {
+                row: rowIndex + 1,
+                column: colIndex + 1
+              });
               tileRow[colIndex + 1] = tile;
               tileRow[colIndex] = 0;
               moved = true;
@@ -2258,9 +2300,26 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
               continue;
             }
 
-            if (tileRow[colIndex - 1] == tile) {
-              // Merge opportunity!
-              tileRow[colIndex - 1] = tile + tile;
+            if (tileRow[colIndex + 1] == tile) {
+              // This is the element we are sliding
+              var collider = this.tileObjs.findIndex(function (tile) {
+                return tile.row == this.row && tile.column == this.column && tile.value > 0;
+              }, {
+                row: rowIndex + 1,
+                column: colIndex + 1
+              }); // This is the element we want to disappear
+
+              var collided = this.tileObjs.findIndex(function (tile) {
+                return tile.row == this.row && tile.column == this.column && tile.value > 0;
+              }, {
+                row: rowIndex + 1,
+                column: colIndex + 2
+              });
+              this.tileObjs[collider].column++;
+              this.tileObjs[collider].value *= 2;
+              this.tileObjs[collided].value = 0; // Merge opportunity!
+
+              tileRow[colIndex + 1] = tile + tile;
               tileRow[colIndex] = 0;
               moved = true;
               everMoved = true;
@@ -2301,7 +2360,20 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
             } // Check for an empty space directly below the tile
 
 
-            if (tiles[rowIndex - 1][colIndex] == 0) {
+            if (tiles[rowIndex - 1][colIndex] === 0) {
+              // DO THE ANIMATION
+              this.tileObjs.map(function (value) {
+                if (this.row != value.row || this.column != value.column) {
+                  // Not the tile we want
+                  return value;
+                }
+
+                value.row--;
+                return value;
+              }, {
+                row: rowIndex + 1,
+                column: colIndex + 1
+              });
               tiles[rowIndex - 1][colIndex] = tile;
               tiles[rowIndex][colIndex] = 0;
               moved = true;
@@ -2311,6 +2383,23 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
             if (tiles[rowIndex - 1][colIndex] == tile) {
+              // This is the element we are sliding
+              var collider = this.tileObjs.findIndex(function (tile) {
+                return tile.row == this.row && tile.column == this.column && tile.value > 0;
+              }, {
+                row: rowIndex + 1,
+                column: colIndex + 1
+              }); // This is the element we want to disappear
+
+              var collided = this.tileObjs.findIndex(function (tile) {
+                return tile.row == this.row && tile.column == this.column && tile.value > 0;
+              }, {
+                row: rowIndex,
+                column: colIndex + 1
+              });
+              this.tileObjs[collider].row--;
+              this.tileObjs[collider].value *= 2;
+              this.tileObjs[collided].value = 0;
               tiles[rowIndex - 1][colIndex] = tile + tile;
               tiles[rowIndex][colIndex] = 0;
               moved = true;
@@ -2347,6 +2436,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
           // Now we have a row to work with, so let's iterate over the columns.
           // The order of these doesn't matter much.
           for (var colIndex = 0; colIndex < 4; colIndex++) {
+            console.log(colIndex);
             var tile = tiles[rowIndex][colIndex]; // We can't move the third row, so we skip it
             // We could do this by starting the loop lower.
 
@@ -2356,6 +2446,18 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
             if (tiles[rowIndex + 1][colIndex] == 0) {
+              this.tileObjs.map(function (value) {
+                if (this.row != value.row || this.column != value.column) {
+                  // Not the tile we want
+                  return value;
+                }
+
+                value.row++;
+                return value;
+              }, {
+                row: rowIndex + 1,
+                column: colIndex + 1
+              });
               tiles[rowIndex + 1][colIndex] = tile;
               tiles[rowIndex][colIndex] = 0;
               moved = true;
@@ -2365,6 +2467,23 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
             if (tiles[rowIndex + 1][colIndex] == tile) {
+              // This is the element we are sliding
+              var collider = this.tileObjs.findIndex(function (tile) {
+                return tile.row == this.row && tile.column == this.column && tile.value > 0;
+              }, {
+                row: rowIndex + 1,
+                column: colIndex + 1
+              }); // This is the element we want to disappear
+
+              var collided = this.tileObjs.findIndex(function (tile) {
+                return tile.row == this.row && tile.column == this.column && tile.value > 0;
+              }, {
+                row: rowIndex + 2,
+                column: colIndex + 1
+              });
+              this.tileObjs[collider].row++;
+              this.tileObjs[collider].value *= 2;
+              this.tileObjs[collided].value = 0;
               tiles[rowIndex + 1][colIndex] = tile + tile;
               tiles[rowIndex][colIndex] = 0;
               moved = true;
@@ -2399,9 +2518,19 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         }
       }
 
+      if (empties.length == 0) {
+        // END OF THE GAME
+        return;
+      }
+
       var randomItem = empties[Math.floor(Math.random() * empties.length)];
       var value = Math.random() < 0.9 ? 2 : 4;
       this.$set(this.tiles[randomItem.row], randomItem.column, value);
+      this.$set(this.tileObjs, this.tileObjs.length, {
+        value: value,
+        column: randomItem.column + 1,
+        row: randomItem.row + 1
+      });
     }
   }
 });
@@ -2556,6 +2685,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
 //
 //
 //
@@ -7329,7 +7461,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".tile[data-v-2618c299] {\n  position: absolute;\n  transition: 100ms ease-in-out;\n  transition-property: transform;\n}\n.tile[data-v-2618c299], .tile .tile-inner[data-v-2618c299] {\n  width: 107px;\n  height: 107px;\n  line-height: 107px;\n}\n.tile .tile-inner[data-v-2618c299] {\n  border-radius: 3px;\n  background: #eee4da;\n  text-align: center;\n  font-weight: bold;\n  z-index: 10;\n  font-size: 55px;\n}\n.tile.tile-2 .tile-inner[data-v-2618c299] {\n  background: #eee4da;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0);\n}\n.tile.tile-4 .tile-inner[data-v-2618c299] {\n  background: #ede0c8;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0);\n}\n.tile.tile-8 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f2b179;\n}\n.tile.tile-16 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f59563;\n}\n.tile.tile-32 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f67c5f;\n}\n.tile.tile-64 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f65e3b;\n}\n.tile.tile-128 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edcf72;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.2381), inset 0 0 0 1px rgba(255, 255, 255, 0.14286);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-128 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-256 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edcc61;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.31746), inset 0 0 0 1px rgba(255, 255, 255, 0.19048);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-256 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-512 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc850;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.39683), inset 0 0 0 1px rgba(255, 255, 255, 0.2381);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-512 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-1024 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc53f;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.47619), inset 0 0 0 1px rgba(255, 255, 255, 0.28571);\n  font-size: 35px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-1024 .tile-inner[data-v-2618c299] {\n    font-size: 15px;\n}\n}\n.tile.tile-2048 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc22e;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.55556), inset 0 0 0 1px rgba(255, 255, 255, 0.33333);\n  font-size: 35px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-2048 .tile-inner[data-v-2618c299] {\n    font-size: 15px;\n}\n}\n.tile.tile-super .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #3c3a32;\n  font-size: 30px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-super .tile-inner[data-v-2618c299] {\n    font-size: 10px;\n}\n}\n", ""]);
+exports.push([module.i, ".tile[data-v-2618c299] {\n  position: absolute;\n  transition: 100ms ease-in-out;\n  transition-property: transform;\n}\n.tile[data-v-2618c299], .tile .tile-inner[data-v-2618c299] {\n  width: 107px;\n  height: 107px;\n  line-height: 107px;\n}\n.tile .tile-inner[data-v-2618c299] {\n  border-radius: 3px;\n  background: #eee4da;\n  text-align: center;\n  font-weight: bold;\n  z-index: 10;\n  font-size: 55px;\n}\n.tile.tile-0[data-v-2618c299] {\n  display: none;\n}\n.tile.tile-2 .tile-inner[data-v-2618c299] {\n  background: #eee4da;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0);\n}\n.tile.tile-4 .tile-inner[data-v-2618c299] {\n  background: #ede0c8;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0);\n}\n.tile.tile-8 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f2b179;\n}\n.tile.tile-16 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f59563;\n}\n.tile.tile-32 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f67c5f;\n}\n.tile.tile-64 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f65e3b;\n}\n.tile.tile-128 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edcf72;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.2381), inset 0 0 0 1px rgba(255, 255, 255, 0.14286);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-128 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-256 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edcc61;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.31746), inset 0 0 0 1px rgba(255, 255, 255, 0.19048);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-256 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-512 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc850;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.39683), inset 0 0 0 1px rgba(255, 255, 255, 0.2381);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-512 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-1024 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc53f;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.47619), inset 0 0 0 1px rgba(255, 255, 255, 0.28571);\n  font-size: 35px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-1024 .tile-inner[data-v-2618c299] {\n    font-size: 15px;\n}\n}\n.tile.tile-2048 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc22e;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.55556), inset 0 0 0 1px rgba(255, 255, 255, 0.33333);\n  font-size: 35px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-2048 .tile-inner[data-v-2618c299] {\n    font-size: 15px;\n}\n}\n.tile.tile-super .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #3c3a32;\n  font-size: 30px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-super .tile-inner[data-v-2618c299] {\n    font-size: 10px;\n}\n}\n", ""]);
 
 // exports
 
@@ -39014,27 +39146,17 @@ var render = function() {
       _c(
         "div",
         { staticClass: "tile-container" },
-        [
-          _vm._l(_vm.tiles, function(columns, row) {
-            return [
-              _vm._l(columns, function(tile, column) {
-                return [
-                  _vm.tiles[row][column] > 0
-                    ? _c("tile", {
-                        key: row + ":" + column,
-                        attrs: {
-                          tileValue: _vm.tiles[row][column],
-                          tileColumn: column + 1,
-                          tileRow: row + 1
-                        }
-                      })
-                    : _vm._e()
-                ]
-              })
-            ]
+        _vm._l(_vm.tileObjs, function(tile, index) {
+          return _c("tile", {
+            key: index,
+            attrs: {
+              tileValue: tile.value,
+              tileColumn: tile.column,
+              tileRow: tile.row
+            }
           })
-        ],
-        2
+        }),
+        1
       ),
       _vm._v(" "),
       _c("Keypress", {
@@ -51550,14 +51672,15 @@ __webpack_require__.r(__webpack_exports__);
 /*!***********************************************!*\
   !*** ./resources/js/components/GameBoard.vue ***!
   \***********************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _GameBoard_vue_vue_type_template_id_265e4b8e_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./GameBoard.vue?vue&type=template&id=265e4b8e&scoped=true& */ "./resources/js/components/GameBoard.vue?vue&type=template&id=265e4b8e&scoped=true&");
 /* harmony import */ var _GameBoard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./GameBoard.vue?vue&type=script&lang=js& */ "./resources/js/components/GameBoard.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _GameBoard_vue_vue_type_style_index_0_id_265e4b8e_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./GameBoard.vue?vue&type=style&index=0&id=265e4b8e&scoped=true&lang=css& */ "./resources/js/components/GameBoard.vue?vue&type=style&index=0&id=265e4b8e&scoped=true&lang=css&");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _GameBoard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _GameBoard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _GameBoard_vue_vue_type_style_index_0_id_265e4b8e_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./GameBoard.vue?vue&type=style&index=0&id=265e4b8e&scoped=true&lang=css& */ "./resources/js/components/GameBoard.vue?vue&type=style&index=0&id=265e4b8e&scoped=true&lang=css&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -51589,7 +51712,7 @@ component.options.__file = "resources/js/components/GameBoard.vue"
 /*!************************************************************************!*\
   !*** ./resources/js/components/GameBoard.vue?vue&type=script&lang=js& ***!
   \************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -51967,15 +52090,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!******************************************!*\
   !*** ./resources/js/components/Tile.vue ***!
   \******************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Tile_vue_vue_type_template_id_2618c299_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Tile.vue?vue&type=template&id=2618c299&scoped=true& */ "./resources/js/components/Tile.vue?vue&type=template&id=2618c299&scoped=true&");
 /* harmony import */ var _Tile_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Tile.vue?vue&type=script&lang=js& */ "./resources/js/components/Tile.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _Tile_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _Tile_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _Tile_vue_vue_type_style_index_0_id_2618c299_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Tile.vue?vue&type=style&index=0&id=2618c299&scoped=true&lang=css& */ "./resources/js/components/Tile.vue?vue&type=style&index=0&id=2618c299&scoped=true&lang=css&");
+/* empty/unused harmony star reexport *//* harmony import */ var _Tile_vue_vue_type_style_index_0_id_2618c299_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Tile.vue?vue&type=style&index=0&id=2618c299&scoped=true&lang=css& */ "./resources/js/components/Tile.vue?vue&type=style&index=0&id=2618c299&scoped=true&lang=css&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -52007,7 +52129,7 @@ component.options.__file = "resources/js/components/Tile.vue"
 /*!*******************************************************************!*\
   !*** ./resources/js/components/Tile.vue?vue&type=script&lang=js& ***!
   \*******************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
