@@ -2454,6 +2454,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
           // Now we have a row to work with, so let's iterate over the columns.
           // The order of these doesn't matter much.
           for (var colIndex = 0; colIndex < 4; colIndex++) {
+            console.log(colIndex);
             var tile = tiles[rowIndex][colIndex]; // We can't move the third row, so we skip it
             // We could do this by starting the loop lower.
 
@@ -2484,30 +2485,44 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
             if (tiles[rowIndex + 1][colIndex] == tile) {
-              this.tileObjs.map(function (value) {
-                console.log(this);
-
-                if (value.column != this.column || value.value == 0) {
-                  // If it's not the right row, we can ignore it.
-                  return value;
-                }
-
-                if (value.row == this.row + 1) {
-                  // This is the one we are colliding into
-                  value.value = 0;
-                }
-
-                if (value.row == this.row) {
-                  // This is the one we are moving
-                  value.row++;
-                  value.value = value.value * 2;
-                }
-
-                return value;
+              // This is the element we are sliding
+              var collider = this.tileObjs.findIndex(function (tile) {
+                return tile.row == this.row && tile.column == this.column;
               }, {
                 row: rowIndex + 1,
-                column: colIndex
+                column: colIndex + 1
               });
+              console.log("Collider:", collider); // This is the element we want to disappear
+
+              var collided = this.tileObjs.findIndex(function (tile) {
+                console.log(tile);
+                console.log(this);
+                return tile.row == this.row && tile.column == this.column;
+              }, {
+                row: rowIndex + 2,
+                column: colIndex + 1
+              });
+              console.log("Collided:", collided);
+              this.tileObjs[collider].row++;
+              this.tileObjs[collider].value *= 2;
+              this.tileObjs[collided].value = 0; // this.tileObjs.map(function(value) {
+              //     console.log(this);
+              //     if(value.column != this.column || value.value == 0) {
+              //         // If it's not the right row, we can ignore it.
+              //         return value;
+              //     }
+              //     if(value.row == (this.row+1)){
+              //         // This is the one we are colliding into
+              //         value.value = 0;
+              //     }
+              //     if(value.row == this.row){
+              //         // This is the one we are moving
+              //         value.row++;
+              //         value.value=value.value*2;
+              //     }
+              //     return value;
+              // }, {row: (rowIndex + 1), column: (colIndex)} );
+
               tiles[rowIndex + 1][colIndex] = tile + tile;
               tiles[rowIndex][colIndex] = 0;
               moved = true;
@@ -51696,14 +51711,15 @@ __webpack_require__.r(__webpack_exports__);
 /*!***********************************************!*\
   !*** ./resources/js/components/GameBoard.vue ***!
   \***********************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _GameBoard_vue_vue_type_template_id_265e4b8e_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./GameBoard.vue?vue&type=template&id=265e4b8e&scoped=true& */ "./resources/js/components/GameBoard.vue?vue&type=template&id=265e4b8e&scoped=true&");
 /* harmony import */ var _GameBoard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./GameBoard.vue?vue&type=script&lang=js& */ "./resources/js/components/GameBoard.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _GameBoard_vue_vue_type_style_index_0_id_265e4b8e_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./GameBoard.vue?vue&type=style&index=0&id=265e4b8e&scoped=true&lang=css& */ "./resources/js/components/GameBoard.vue?vue&type=style&index=0&id=265e4b8e&scoped=true&lang=css&");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _GameBoard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _GameBoard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _GameBoard_vue_vue_type_style_index_0_id_265e4b8e_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./GameBoard.vue?vue&type=style&index=0&id=265e4b8e&scoped=true&lang=css& */ "./resources/js/components/GameBoard.vue?vue&type=style&index=0&id=265e4b8e&scoped=true&lang=css&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -51735,7 +51751,7 @@ component.options.__file = "resources/js/components/GameBoard.vue"
 /*!************************************************************************!*\
   !*** ./resources/js/components/GameBoard.vue?vue&type=script&lang=js& ***!
   \************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -52113,15 +52129,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!******************************************!*\
   !*** ./resources/js/components/Tile.vue ***!
   \******************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Tile_vue_vue_type_template_id_2618c299_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Tile.vue?vue&type=template&id=2618c299&scoped=true& */ "./resources/js/components/Tile.vue?vue&type=template&id=2618c299&scoped=true&");
 /* harmony import */ var _Tile_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Tile.vue?vue&type=script&lang=js& */ "./resources/js/components/Tile.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _Tile_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _Tile_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _Tile_vue_vue_type_style_index_0_id_2618c299_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Tile.vue?vue&type=style&index=0&id=2618c299&scoped=true&lang=css& */ "./resources/js/components/Tile.vue?vue&type=style&index=0&id=2618c299&scoped=true&lang=css&");
+/* empty/unused harmony star reexport *//* harmony import */ var _Tile_vue_vue_type_style_index_0_id_2618c299_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Tile.vue?vue&type=style&index=0&id=2618c299&scoped=true&lang=css& */ "./resources/js/components/Tile.vue?vue&type=style&index=0&id=2618c299&scoped=true&lang=css&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -52153,7 +52168,7 @@ component.options.__file = "resources/js/components/Tile.vue"
 /*!*******************************************************************!*\
   !*** ./resources/js/components/Tile.vue?vue&type=script&lang=js& ***!
   \*******************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

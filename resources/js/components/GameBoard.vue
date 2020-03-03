@@ -315,7 +315,7 @@ export default {
                     // Now we have a row to work with, so let's iterate over the columns.
                     // The order of these doesn't matter much.
                     for(let colIndex = 0; colIndex < 4; colIndex++){
-
+                        console.log(colIndex)
                         let tile = tiles[rowIndex][colIndex];
 
                         // We can't move the third row, so we skip it
@@ -344,23 +344,43 @@ export default {
                         // Check for merge
                         if( tiles[rowIndex + 1][colIndex] == tile) {
 
-                            this.tileObjs.map(function(value) {
+                            // This is the element we are sliding
+                            let collider = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column
+                            }, {row: (rowIndex+1), column: (colIndex+1)});
+                            console.log("Collider:",collider);
+                            // This is the element we want to disappear
+                            let collided = this.tileObjs.findIndex(function(tile){
+                                console.log(tile);
                                 console.log(this);
-                                if(value.column != this.column || value.value == 0) {
-                                    // If it's not the right row, we can ignore it.
-                                    return value;
-                                }
-                                if(value.row == (this.row+1)){
-                                    // This is the one we are colliding into
-                                    value.value = 0;
-                                }
-                                if(value.row == this.row){
-                                    // This is the one we are moving
-                                    value.row++;
-                                    value.value=value.value*2;
-                                }
-                                return value;
-                            }, {row: (rowIndex + 1), column: (colIndex)} );
+                                return tile.row == this.row && tile.column == this.column
+                            }, {row: (rowIndex+2), column: (colIndex+1)});
+                            console.log("Collided:",collided);
+
+                            this.tileObjs[collider].row++;
+                            this.tileObjs[collider].value *= 2;
+
+                            this.tileObjs[collided].value = 0;
+
+
+
+                            // this.tileObjs.map(function(value) {
+                            //     console.log(this);
+                            //     if(value.column != this.column || value.value == 0) {
+                            //         // If it's not the right row, we can ignore it.
+                            //         return value;
+                            //     }
+                            //     if(value.row == (this.row+1)){
+                            //         // This is the one we are colliding into
+                            //         value.value = 0;
+                            //     }
+                            //     if(value.row == this.row){
+                            //         // This is the one we are moving
+                            //         value.row++;
+                            //         value.value=value.value*2;
+                            //     }
+                            //     return value;
+                            // }, {row: (rowIndex + 1), column: (colIndex)} );
 
                             tiles[rowIndex + 1][colIndex] = tile + tile;
                             tiles[rowIndex][colIndex] = 0;
