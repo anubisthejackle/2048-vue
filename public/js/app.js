@@ -2212,7 +2212,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
               if (tileRow[colIndex - 1] == tile) {
                 this.tileObjs.map(function (value) {
-                  if (value.row != this.row) {
+                  if (value.row != this.row || value.value == 0) {
                     // If it's not the right row, we can ignore it.
                     return value;
                   }
@@ -2681,6 +2681,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
 //
 //
 //
@@ -7454,7 +7457,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".tile[data-v-2618c299] {\n  position: absolute;\n  transition: 100ms ease-in-out;\n  transition-property: transform;\n}\n.tile[data-v-2618c299], .tile .tile-inner[data-v-2618c299] {\n  width: 107px;\n  height: 107px;\n  line-height: 107px;\n}\n.tile .tile-inner[data-v-2618c299] {\n  border-radius: 3px;\n  background: #eee4da;\n  text-align: center;\n  font-weight: bold;\n  z-index: 10;\n  font-size: 55px;\n}\n.tile.tile-2 .tile-inner[data-v-2618c299] {\n  background: #eee4da;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0);\n}\n.tile.tile-4 .tile-inner[data-v-2618c299] {\n  background: #ede0c8;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0);\n}\n.tile.tile-8 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f2b179;\n}\n.tile.tile-16 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f59563;\n}\n.tile.tile-32 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f67c5f;\n}\n.tile.tile-64 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f65e3b;\n}\n.tile.tile-128 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edcf72;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.2381), inset 0 0 0 1px rgba(255, 255, 255, 0.14286);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-128 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-256 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edcc61;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.31746), inset 0 0 0 1px rgba(255, 255, 255, 0.19048);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-256 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-512 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc850;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.39683), inset 0 0 0 1px rgba(255, 255, 255, 0.2381);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-512 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-1024 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc53f;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.47619), inset 0 0 0 1px rgba(255, 255, 255, 0.28571);\n  font-size: 35px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-1024 .tile-inner[data-v-2618c299] {\n    font-size: 15px;\n}\n}\n.tile.tile-2048 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc22e;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.55556), inset 0 0 0 1px rgba(255, 255, 255, 0.33333);\n  font-size: 35px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-2048 .tile-inner[data-v-2618c299] {\n    font-size: 15px;\n}\n}\n.tile.tile-super .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #3c3a32;\n  font-size: 30px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-super .tile-inner[data-v-2618c299] {\n    font-size: 10px;\n}\n}\n", ""]);
+exports.push([module.i, ".tile[data-v-2618c299] {\n  position: absolute;\n  transition: 100ms ease-in-out;\n  transition-property: transform;\n}\n.tile[data-v-2618c299], .tile .tile-inner[data-v-2618c299] {\n  width: 107px;\n  height: 107px;\n  line-height: 107px;\n}\n.tile .tile-inner[data-v-2618c299] {\n  border-radius: 3px;\n  background: #eee4da;\n  text-align: center;\n  font-weight: bold;\n  z-index: 10;\n  font-size: 55px;\n}\n.tile.tile-0[data-v-2618c299] {\n  display: none;\n}\n.tile.tile-2 .tile-inner[data-v-2618c299] {\n  background: #eee4da;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0);\n}\n.tile.tile-4 .tile-inner[data-v-2618c299] {\n  background: #ede0c8;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0);\n}\n.tile.tile-8 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f2b179;\n}\n.tile.tile-16 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f59563;\n}\n.tile.tile-32 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f67c5f;\n}\n.tile.tile-64 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f65e3b;\n}\n.tile.tile-128 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edcf72;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.2381), inset 0 0 0 1px rgba(255, 255, 255, 0.14286);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-128 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-256 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edcc61;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.31746), inset 0 0 0 1px rgba(255, 255, 255, 0.19048);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-256 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-512 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc850;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.39683), inset 0 0 0 1px rgba(255, 255, 255, 0.2381);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-512 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-1024 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc53f;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.47619), inset 0 0 0 1px rgba(255, 255, 255, 0.28571);\n  font-size: 35px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-1024 .tile-inner[data-v-2618c299] {\n    font-size: 15px;\n}\n}\n.tile.tile-2048 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc22e;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.55556), inset 0 0 0 1px rgba(255, 255, 255, 0.33333);\n  font-size: 35px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-2048 .tile-inner[data-v-2618c299] {\n    font-size: 15px;\n}\n}\n.tile.tile-super .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #3c3a32;\n  font-size: 30px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-super .tile-inner[data-v-2618c299] {\n    font-size: 10px;\n}\n}\n", ""]);
 
 // exports
 
@@ -39140,16 +39143,14 @@ var render = function() {
         "div",
         { staticClass: "tile-container" },
         _vm._l(_vm.tileObjs, function(tile, index) {
-          return tile.value > 0
-            ? _c("tile", {
-                key: index,
-                attrs: {
-                  tileValue: tile.value,
-                  tileColumn: tile.column,
-                  tileRow: tile.row
-                }
-              })
-            : _vm._e()
+          return _c("tile", {
+            key: index,
+            attrs: {
+              tileValue: tile.value,
+              tileColumn: tile.column,
+              tileRow: tile.row
+            }
+          })
         }),
         1
       ),

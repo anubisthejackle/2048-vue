@@ -6,7 +6,7 @@
             <grid-row v-for="(x,index) in 4" :key="index" />
         </div>
         <div class="tile-container">
-            <tile v-for="(tile,index) in tileObjs" :key="index" v-if="tile.value>0" :tileValue="tile.value" :tileColumn="tile.column" :tileRow="tile.row"></tile>
+            <tile v-for="(tile,index) in tileObjs" :key="index" :tileValue="tile.value" :tileColumn="tile.column" :tileRow="tile.row"></tile>
         </div>
         <Keypress :key-code="38" event="keyup" @pressed="moveUp" />
         <Keypress :key-code="37" event="keyup" @pressed="moveLeft" />
@@ -115,7 +115,7 @@ export default {
 
                         if(tileRow[colIndex-1] == tile){
                             this.tileObjs.map(function(value) {
-                                if(value.row != this.row) {
+                                if(value.row != this.row || value.value == 0) {
                                     // If it's not the right row, we can ignore it.
                                     return value;
                                 }
