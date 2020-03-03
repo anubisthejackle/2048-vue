@@ -115,22 +115,21 @@ export default {
                         }
 
                         if(tileRow[colIndex-1] == tile){
-                            this.tileObjs.map(function(value) {
-                                if(value.row != this.row || value.value == 0) {
-                                    // If it's not the right row, we can ignore it.
-                                    return value;
-                                }
-                                if(value.column == this.column){
-                                    // This is the one we are colliding into
-                                    value.value = 0;
-                                }
-                                if(value.column == (this.column+1)){
-                                    // This is the one we are moving
-                                    value.column--;
-                                    value.value= value.value+value.value;
-                                }
-                                return value;
-                            }, {row: (rowIndex + 1), column: (colIndex)} );
+
+                            // This is the element we are sliding
+                            let collider = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
+                            }, {row: (rowIndex+1), column: (colIndex+1)});
+
+                            // This is the element we want to disappear
+                            let collided = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
+                            }, {row: (rowIndex+1), column: (colIndex)});
+
+                            this.tileObjs[collider].column--;
+                            this.tileObjs[collider].value *= 2;
+
+                            this.tileObjs[collided].value = 0;
 
                             // Merge opportunity!
                             tileRow[colIndex-1] = tile + tile;
@@ -187,22 +186,20 @@ export default {
 
                         if(tileRow[colIndex+1] == tile){
 
-                            this.tileObjs.map(function(value) {
-                                if(value.row != this.row || value.value == 0) {
-                                    // If it's not the right row, we can ignore it.
-                                    return value;
-                                }
-                                if(value.column == (this.column + 1)){
-                                    // This is the one we are colliding into
-                                    value.value = 0;
-                                }
-                                if(value.column == this.column){
-                                    // This is the one we are moving
-                                    value.column++;
-                                    value.value= value.value+value.value;
-                                }
-                                return value;
-                            }, {row: (rowIndex + 1), column: (colIndex+1)} );
+                            // This is the element we are sliding
+                            let collider = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
+                            }, {row: (rowIndex+1), column: (colIndex+1)});
+
+                            // This is the element we want to disappear
+                            let collided = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
+                            }, {row: (rowIndex+1), column: (colIndex+2)});
+
+                            this.tileObjs[collider].column++;
+                            this.tileObjs[collider].value *= 2;
+
+                            this.tileObjs[collided].value = 0;
 
                             // Merge opportunity!
                             tileRow[colIndex+1] = tile + tile;
@@ -265,22 +262,21 @@ export default {
 
                         // Check for merge
                         if( tiles[rowIndex - 1][colIndex] == tile) {
-                            this.tileObjs.map(function(value) {
-                                if(value.column != this.column || value.value == 0) {
-                                    // If it's not the right row, we can ignore it.
-                                    return value;
-                                }
-                                if(value.row == this.row){
-                                    // This is the one we are colliding into
-                                    value.value = 0;
-                                }
-                                if(value.row == (this.row+1)){
-                                    // This is the one we are moving
-                                    value.row--;
-                                    value.value= value.value+value.value;
-                                }
-                                return value;
-                            }, {row: (rowIndex), column: (colIndex)} );
+
+                            // This is the element we are sliding
+                            let collider = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
+                            }, {row: (rowIndex+1), column: (colIndex+1)});
+
+                            // This is the element we want to disappear
+                            let collided = this.tileObjs.findIndex(function(tile){
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
+                            }, {row: (rowIndex), column: (colIndex+1)});
+
+                            this.tileObjs[collider].row--;
+                            this.tileObjs[collider].value *= 2;
+
+                            this.tileObjs[collided].value = 0;
 
                             tiles[rowIndex - 1][colIndex] = tile + tile;
                             tiles[rowIndex][colIndex] = 0;
@@ -346,41 +342,18 @@ export default {
 
                             // This is the element we are sliding
                             let collider = this.tileObjs.findIndex(function(tile){
-                                return tile.row == this.row && tile.column == this.column
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
                             }, {row: (rowIndex+1), column: (colIndex+1)});
-                            console.log("Collider:",collider);
+
                             // This is the element we want to disappear
                             let collided = this.tileObjs.findIndex(function(tile){
-                                console.log(tile);
-                                console.log(this);
-                                return tile.row == this.row && tile.column == this.column
+                                return tile.row == this.row && tile.column == this.column && tile.value > 0
                             }, {row: (rowIndex+2), column: (colIndex+1)});
-                            console.log("Collided:",collided);
 
                             this.tileObjs[collider].row++;
                             this.tileObjs[collider].value *= 2;
 
                             this.tileObjs[collided].value = 0;
-
-
-
-                            // this.tileObjs.map(function(value) {
-                            //     console.log(this);
-                            //     if(value.column != this.column || value.value == 0) {
-                            //         // If it's not the right row, we can ignore it.
-                            //         return value;
-                            //     }
-                            //     if(value.row == (this.row+1)){
-                            //         // This is the one we are colliding into
-                            //         value.value = 0;
-                            //     }
-                            //     if(value.row == this.row){
-                            //         // This is the one we are moving
-                            //         value.row++;
-                            //         value.value=value.value*2;
-                            //     }
-                            //     return value;
-                            // }, {row: (rowIndex + 1), column: (colIndex)} );
 
                             tiles[rowIndex + 1][colIndex] = tile + tile;
                             tiles[rowIndex][colIndex] = 0;
