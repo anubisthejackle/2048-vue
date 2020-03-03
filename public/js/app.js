@@ -2137,10 +2137,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 //
 //
 //
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2153,8 +2149,16 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
   },
   data: function data() {
     return {
-      tiles: [[2, 0, 0, 2], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+      tileObjs: [{
+        value: 2,
+        row: 3,
+        column: 3
+      }],
+      tiles: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 2, 0], [0, 0, 0, 0]]
     };
+  },
+  mounted: function mounted() {// this.generateRandomTile();
+    // this.generateRandomTile();
   },
   methods: {
     moveLeft: function moveLeft() {
@@ -2177,27 +2181,61 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
           try {
             for (var _iterator = tileRow.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
               var _step$value = _slicedToArray(_step.value, 2),
-                  index = _step$value[0],
+                  colIndex = _step$value[0],
                   tile = _step$value[1];
 
               // If the tile is empty, or we're at the left edge, skip.
-              if (tile == 0 || index == 0) {
+              if (tile == 0 || colIndex == 0) {
                 continue;
               }
 
-              if (tileRow[index - 1] == 0) {
+              if (tileRow[colIndex - 1] == 0) {
                 // The space is empty, let's move there.
-                tileRow[index - 1] = tile;
-                tileRow[index] = 0;
+                this.tileObjs.map(function (value) {
+                  if (this.row != value.row || this.column != value.column) {
+                    // Not the tile we want
+                    return value;
+                  }
+
+                  value.column--;
+                  return value;
+                }, {
+                  row: rowIndex + 1,
+                  column: colIndex + 1
+                });
+                tileRow[colIndex - 1] = tile;
+                tileRow[colIndex] = 0;
                 moved = true;
                 everMoved = true;
                 continue;
               }
 
-              if (tileRow[index - 1] == tile) {
-                // Merge opportunity!
-                tileRow[index - 1] = tile + tile;
-                tileRow[index] = 0; // this.$set(this.tiles, rowIndex, tileRow);
+              if (tileRow[colIndex - 1] == tile) {
+                this.tileObjs.map(function (value) {
+                  if (value.row != this.row) {
+                    // If it's not the right row, we can ignore it.
+                    return value;
+                  }
+
+                  if (value.column == this.column) {
+                    // This is the one we are colliding into
+                    value.value = 0;
+                  }
+
+                  if (value.column == this.column + 1) {
+                    // This is the one we are moving
+                    value.column--;
+                    value.value = value.value + value.value;
+                  }
+
+                  return value;
+                }, {
+                  row: rowIndex + 1,
+                  column: colIndex
+                }); // Merge opportunity!
+
+                tileRow[colIndex - 1] = tile + tile;
+                tileRow[colIndex] = 0; // this.$set(this.tiles, rowIndex, tileRow);
 
                 moved = true;
                 everMoved = true;
@@ -2251,6 +2289,18 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
             if (tileRow[colIndex + 1] == 0) {
               // The space is empty, let's move there.
+              this.tileObjs.map(function (value) {
+                if (this.row != value.row || this.column != value.column) {
+                  // Not the tile we want
+                  return value;
+                }
+
+                value.column++;
+                return value;
+              }, {
+                row: rowIndex + 1,
+                column: colIndex + 1
+              });
               tileRow[colIndex + 1] = tile;
               tileRow[colIndex] = 0;
               moved = true;
@@ -2259,7 +2309,20 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
             }
 
             if (tileRow[colIndex - 1] == tile) {
-              // Merge opportunity!
+              this.tileObjs.map(function (value) {
+                if (this.row != value.row || this.column != value.column) {
+                  // Not the tile we want
+                  return value;
+                }
+
+                value.column++;
+                value.value = value.value + value.value;
+                return value;
+              }, {
+                row: rowIndex + 1,
+                column: colIndex + 1
+              }); // Merge opportunity!
+
               tileRow[colIndex - 1] = tile + tile;
               tileRow[colIndex] = 0;
               moved = true;
@@ -2301,7 +2364,20 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
             } // Check for an empty space directly below the tile
 
 
-            if (tiles[rowIndex - 1][colIndex] == 0) {
+            if (tiles[rowIndex - 1][colIndex] === 0) {
+              // DO THE ANIMATION
+              this.tileObjs.map(function (value) {
+                if (this.row != value.row || this.column != value.column) {
+                  // Not the tile we want
+                  return value;
+                }
+
+                value.row--;
+                return value;
+              }, {
+                row: rowIndex + 1,
+                column: colIndex + 1
+              });
               tiles[rowIndex - 1][colIndex] = tile;
               tiles[rowIndex][colIndex] = 0;
               moved = true;
@@ -2311,6 +2387,20 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
             if (tiles[rowIndex - 1][colIndex] == tile) {
+              // DO THE ANIMATION
+              this.tileObjs.map(function (value) {
+                if (this.row != value.row || this.column != value.column) {
+                  // Not the tile we want
+                  return value;
+                }
+
+                value.row--;
+                value.value = value.value + value.value;
+                return value;
+              }, {
+                row: rowIndex + 1,
+                column: colIndex + 1
+              });
               tiles[rowIndex - 1][colIndex] = tile + tile;
               tiles[rowIndex][colIndex] = 0;
               moved = true;
@@ -2356,6 +2446,18 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
             if (tiles[rowIndex + 1][colIndex] == 0) {
+              this.tileObjs.map(function (value) {
+                if (this.row != value.row || this.column != value.column) {
+                  // Not the tile we want
+                  return value;
+                }
+
+                value.row++;
+                return value;
+              }, {
+                row: rowIndex + 1,
+                column: colIndex + 1
+              });
               tiles[rowIndex + 1][colIndex] = tile;
               tiles[rowIndex][colIndex] = 0;
               moved = true;
@@ -2365,6 +2467,19 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
             if (tiles[rowIndex + 1][colIndex] == tile) {
+              this.tileObjs.map(function (value) {
+                if (this.row != value.row || this.column != value.column) {
+                  // Not the tile we want
+                  return value;
+                }
+
+                value.row++;
+                value.value = value.value + value.value;
+                return value;
+              }, {
+                row: rowIndex + 1,
+                column: colIndex + 1
+              });
               tiles[rowIndex + 1][colIndex] = tile + tile;
               tiles[rowIndex][colIndex] = 0;
               moved = true;
@@ -2399,9 +2514,19 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         }
       }
 
+      if (empties.length == 0) {
+        // END OF THE GAME
+        return;
+      }
+
       var randomItem = empties[Math.floor(Math.random() * empties.length)];
       var value = Math.random() < 0.9 ? 2 : 4;
       this.$set(this.tiles[randomItem.row], randomItem.column, value);
+      this.$set(this.tileObjs, this.tileObjs.length, {
+        value: value,
+        column: randomItem.column + 1,
+        row: randomItem.row + 1
+      });
     }
   }
 });
@@ -39014,27 +39139,19 @@ var render = function() {
       _c(
         "div",
         { staticClass: "tile-container" },
-        [
-          _vm._l(_vm.tiles, function(columns, row) {
-            return [
-              _vm._l(columns, function(tile, column) {
-                return [
-                  _vm.tiles[row][column] > 0
-                    ? _c("tile", {
-                        key: row + ":" + column,
-                        attrs: {
-                          tileValue: _vm.tiles[row][column],
-                          tileColumn: column + 1,
-                          tileRow: row + 1
-                        }
-                      })
-                    : _vm._e()
-                ]
+        _vm._l(_vm.tileObjs, function(tile, index) {
+          return tile.value > 0
+            ? _c("tile", {
+                key: index,
+                attrs: {
+                  tileValue: tile.value,
+                  tileColumn: tile.column,
+                  tileRow: tile.row
+                }
               })
-            ]
-          })
-        ],
-        2
+            : _vm._e()
+        }),
+        1
       ),
       _vm._v(" "),
       _c("Keypress", {
