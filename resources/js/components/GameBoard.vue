@@ -61,23 +61,18 @@ export default {
     data() {
         return {
             tileObjs: [
-                    {
-                        value: 2,
-                        row: 3,
-                        column: 3
-                    }
             ],
             tiles: [
                     [0,0,0,0],
                     [0,0,0,0],
-                    [0,0,2,0],
+                    [0,0,0,0],
                     [0,0,0,0]
            ]
         }
     },
     mounted() {
-        // this.generateRandomTile();
-        // this.generateRandomTile();
+        this.generateRandomTile();
+        this.generateRandomTile();
     },
     methods:{
         moveLeft: function(){

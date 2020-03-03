@@ -2149,16 +2149,13 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
   },
   data: function data() {
     return {
-      tileObjs: [{
-        value: 2,
-        row: 3,
-        column: 3
-      }],
-      tiles: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 2, 0], [0, 0, 0, 0]]
+      tileObjs: [],
+      tiles: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
     };
   },
-  mounted: function mounted() {// this.generateRandomTile();
-    // this.generateRandomTile();
+  mounted: function mounted() {
+    this.generateRandomTile();
+    this.generateRandomTile();
   },
   methods: {
     moveLeft: function moveLeft() {
