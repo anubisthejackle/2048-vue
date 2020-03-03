@@ -2061,8 +2061,21 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       currentScore: 0,
-      bestScore: 16396
+      bestScore: 0,
+      gameNumber: 1
     };
+  },
+  methods: {
+    newGame: function newGame() {
+      this.gameNumber++;
+    },
+    updateScore: function updateScore(newScore) {
+      this.currentScore = newScore;
+
+      if (this.currentScore > this.bestScore) {
+        this.bestScore = this.currentScore;
+      }
+    }
   }
 });
 
@@ -2137,6 +2150,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2147,11 +2161,13 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       return __webpack_require__.e(/*! import() */ 0).then(__webpack_require__.t.bind(null, /*! vue-keypress */ "./node_modules/vue-keypress/dist/Keypress.umd.js", 7));
     }
   },
+  props: ['gameNumber'],
   data: function data() {
     return {
       tileObjs: [],
       tiles: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
-      gameOver: false
+      gameOver: false,
+      currentScore: 0
     };
   },
   mounted: function mounted() {
@@ -2160,7 +2176,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
   },
   methods: {
     moveLeft: function moveLeft() {
-      console.log("Left Arrow Pressed");
+      // console.log("Left Arrow Pressed");
       var moved,
           everMoved = false;
       var tileRow;
@@ -2224,7 +2240,9 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
                   column: colIndex
                 });
                 this.tileObjs[collider].column--;
+                this.tileObjs[collider].merged = true;
                 this.tileObjs[collider].value *= 2;
+                this.currentScore += this.tileObjs[collider].value;
                 this.tileObjs[collided].value = 0; // Merge opportunity!
 
                 tileRow[colIndex - 1] = tile + tile;
@@ -2317,7 +2335,9 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
                 column: colIndex + 2
               });
               this.tileObjs[collider].column++;
+              this.tileObjs[collider].merged = true;
               this.tileObjs[collider].value *= 2;
+              this.currentScore += this.tileObjs[collider].value;
               this.tileObjs[collided].value = 0; // Merge opportunity!
 
               tileRow[colIndex + 1] = tile + tile;
@@ -2398,7 +2418,9 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
                 column: colIndex + 1
               });
               this.tileObjs[collider].row--;
+              this.tileObjs[collider].merged = true;
               this.tileObjs[collider].value *= 2;
+              this.currentScore += this.tileObjs[collider].value;
               this.tileObjs[collided].value = 0;
               tiles[rowIndex - 1][colIndex] = tile + tile;
               tiles[rowIndex][colIndex] = 0;
@@ -2480,7 +2502,9 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
                 column: colIndex + 1
               });
               this.tileObjs[collider].row++;
+              this.tileObjs[collider].merged = true;
               this.tileObjs[collider].value *= 2;
+              this.currentScore += this.tileObjs[collider].value;
               this.tileObjs[collided].value = 0;
               tiles[rowIndex + 1][colIndex] = tile + tile;
               tiles[rowIndex][colIndex] = 0;
@@ -2527,7 +2551,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       this.$set(this.tileObjs, this.tileObjs.length, {
         value: value,
         column: randomItem.column + 1,
-        row: randomItem.row + 1
+        row: randomItem.row + 1,
+        merged: false
       });
       this.checkForGameOver();
     },
@@ -2569,6 +2594,44 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       }
 
       return false;
+    },
+    handleKeypress: function handleKeypress(keyCode) {
+      if (keyCode < 37 || keyCode > 40) {
+        return;
+      }
+
+      if (keyCode == 38) {
+        this.moveUp();
+      }
+
+      if (keyCode == 37) {
+        this.moveLeft();
+      }
+
+      if (keyCode == 39) {
+        this.moveRight();
+      }
+
+      if (keyCode == 40) {
+        this.moveDown();
+      }
+
+      this.tileObjs.map(function (tile) {
+        tile.merged = false;
+      });
+    }
+  },
+  watch: {
+    gameNumber: function gameNumber(newVal, oldVal) {
+      this.tileObjs = [];
+      this.tiles = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+      this.gameOver = false;
+      this.currentScore = 0;
+      this.generateRandomTile();
+      this.generateRandomTile();
+    },
+    currentScore: function currentScore(newVal, oldVal) {
+      this.$emit('updateScore', newVal);
     }
   }
 });
@@ -2660,7 +2723,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['scoreName']
+  props: ['scoreName'],
+  methods: {
+    clicked: function clicked() {
+      this.$emit("clicked");
+    }
+  }
 });
 
 /***/ }),
@@ -2851,8 +2919,84 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['tileValue', 'tileColumn', 'tileRow'],
+  props: ['tileValue', 'tileColumn', 'tileRow', 'merged'],
   computed: {
     tilePosition: function tilePosition() {
       // This is where we compute the tile position style and pass it dynamically to the inline style
@@ -2862,7 +3006,13 @@ __webpack_require__.r(__webpack_exports__);
       return "translate(".concat(column, "px, ").concat(row, "px)");
     },
     dynamicClass: function dynamicClass() {
-      return "tile-" + this.tileValue;
+      var cssClass = "tile-" + this.tileValue;
+
+      if (this.merged == true) {
+        cssClass = cssClass + " tile-merged";
+      }
+
+      return cssClass;
     }
   }
 });
@@ -7488,7 +7638,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, ".tile[data-v-2618c299] {\n  position: absolute;\n  transition: 100ms ease-in-out;\n  transition-property: transform;\n}\n.tile[data-v-2618c299], .tile .tile-inner[data-v-2618c299] {\n  width: 107px;\n  height: 107px;\n  line-height: 107px;\n}\n.tile .tile-inner[data-v-2618c299] {\n  border-radius: 3px;\n  background: #eee4da;\n  text-align: center;\n  font-weight: bold;\n  z-index: 10;\n  font-size: 55px;\n}\n.tile.tile-0[data-v-2618c299] {\n  display: none;\n}\n.tile.tile-2 .tile-inner[data-v-2618c299] {\n  background: #eee4da;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0);\n}\n.tile.tile-4 .tile-inner[data-v-2618c299] {\n  background: #ede0c8;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0);\n}\n.tile.tile-8 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f2b179;\n}\n.tile.tile-16 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f59563;\n}\n.tile.tile-32 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f67c5f;\n}\n.tile.tile-64 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f65e3b;\n}\n.tile.tile-128 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edcf72;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.2381), inset 0 0 0 1px rgba(255, 255, 255, 0.14286);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-128 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-256 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edcc61;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.31746), inset 0 0 0 1px rgba(255, 255, 255, 0.19048);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-256 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-512 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc850;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.39683), inset 0 0 0 1px rgba(255, 255, 255, 0.2381);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-512 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-1024 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc53f;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.47619), inset 0 0 0 1px rgba(255, 255, 255, 0.28571);\n  font-size: 35px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-1024 .tile-inner[data-v-2618c299] {\n    font-size: 15px;\n}\n}\n.tile.tile-2048 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc22e;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.55556), inset 0 0 0 1px rgba(255, 255, 255, 0.33333);\n  font-size: 35px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-2048 .tile-inner[data-v-2618c299] {\n    font-size: 15px;\n}\n}\n.tile.tile-super .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #3c3a32;\n  font-size: 30px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-super .tile-inner[data-v-2618c299] {\n    font-size: 10px;\n}\n}\n", ""]);
+exports.push([module.i, ".tile[data-v-2618c299] {\n  position: absolute;\n  transition: 100ms ease-in-out;\n  transition-property: transform;\n}\n.tile[data-v-2618c299], .tile .tile-inner[data-v-2618c299] {\n  width: 107px;\n  height: 107px;\n  line-height: 107px;\n}\n.tile .tile-inner[data-v-2618c299] {\n  border-radius: 3px;\n  background: #eee4da;\n  text-align: center;\n  font-weight: bold;\n  z-index: 10;\n  font-size: 55px;\n}\n.tile.tile-0[data-v-2618c299] {\n  display: none;\n}\n.tile.tile-2 .tile-inner[data-v-2618c299] {\n  background: #eee4da;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0);\n}\n.tile.tile-4 .tile-inner[data-v-2618c299] {\n  background: #ede0c8;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0), inset 0 0 0 1px rgba(255, 255, 255, 0);\n}\n.tile.tile-8 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f2b179;\n}\n.tile.tile-16 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f59563;\n}\n.tile.tile-32 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f67c5f;\n}\n.tile.tile-64 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #f65e3b;\n}\n.tile.tile-128 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edcf72;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.2381), inset 0 0 0 1px rgba(255, 255, 255, 0.14286);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-128 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-256 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edcc61;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.31746), inset 0 0 0 1px rgba(255, 255, 255, 0.19048);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-256 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-512 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc850;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.39683), inset 0 0 0 1px rgba(255, 255, 255, 0.2381);\n  font-size: 45px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-512 .tile-inner[data-v-2618c299] {\n    font-size: 25px;\n}\n}\n.tile.tile-1024 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc53f;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.47619), inset 0 0 0 1px rgba(255, 255, 255, 0.28571);\n  font-size: 35px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-1024 .tile-inner[data-v-2618c299] {\n    font-size: 15px;\n}\n}\n.tile.tile-2048 .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #edc22e;\n  box-shadow: 0 0 30px 10px rgba(243, 215, 116, 0.55556), inset 0 0 0 1px rgba(255, 255, 255, 0.33333);\n  font-size: 35px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-2048 .tile-inner[data-v-2618c299] {\n    font-size: 15px;\n}\n}\n.tile.tile-super .tile-inner[data-v-2618c299] {\n  color: #f9f6f2;\n  background: #3c3a32;\n  font-size: 30px;\n}\n@media screen and (max-width: 520px) {\n.tile.tile-super .tile-inner[data-v-2618c299] {\n    font-size: 10px;\n}\n}\n@-webkit-keyframes pop-data-v-2618c299 {\n0% {\n    transform: scale(0);\n}\n50% {\n    transform: scale(1.2);\n}\n100% {\n    transform: scale(1);\n}\n}\n@keyframes pop-data-v-2618c299 {\n0% {\n    transform: scale(0);\n}\n50% {\n    transform: scale(1.2);\n}\n100% {\n    transform: scale(1);\n}\n}\n.tile-merged .tile-inner[data-v-2618c299] {\n  z-index: 20;\n  -webkit-animation: pop-data-v-2618c299 200ms ease 100ms;\n  animation: pop-data-v-2618c299 200ms ease 100ms;\n  -webkit-animation-fill-mode: backwards;\n  animation-fill-mode: backwards;\n}\n\n", ""]);
 
 // exports
 
@@ -39106,11 +39256,18 @@ var render = function() {
       _c(
         "div",
         { staticClass: "flex items-center align-middle justify-between" },
-        [_vm._m(0), _vm._v(" "), _c("new-game", [_vm._v("New Game")])],
+        [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("new-game", { on: { clicked: _vm.newGame } }, [_vm._v("New Game")])
+        ],
         1
       ),
       _vm._v(" "),
-      _c("GameBoard"),
+      _c("GameBoard", {
+        attrs: { gameNumber: _vm.gameNumber },
+        on: { updateScore: _vm.updateScore }
+      }),
       _vm._v(" "),
       _vm._m(1)
     ],
@@ -39179,7 +39336,8 @@ var render = function() {
             attrs: {
               tileValue: tile.value,
               tileColumn: tile.column,
-              tileRow: tile.row
+              tileRow: tile.row,
+              merged: tile.merged
             }
           })
         }),
@@ -39188,29 +39346,8 @@ var render = function() {
       _vm._v(" "),
       _vm.gameOver == false
         ? _c("Keypress", {
-            attrs: { "key-code": 38, event: "keyup" },
-            on: { pressed: _vm.moveUp }
-          })
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.gameOver == false
-        ? _c("Keypress", {
-            attrs: { "key-code": 37, event: "keyup" },
-            on: { pressed: _vm.moveLeft }
-          })
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.gameOver == false
-        ? _c("Keypress", {
-            attrs: { "key-code": 39, event: "keyup" },
-            on: { pressed: _vm.moveRight }
-          })
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.gameOver == false
-        ? _c("Keypress", {
-            attrs: { "key-code": 40, event: "keyup" },
-            on: { pressed: _vm.moveDown }
+            attrs: { event: "keyup" },
+            on: { pressed: _vm.handleKeypress }
           })
         : _vm._e()
     ],
@@ -39298,13 +39435,23 @@ var render = function() {
     "div",
     {
       staticClass:
-        "text-center align-middle rounded pl-5 pr-5 pt-2 pb-2 h-auto",
-      staticStyle: { background: "#8f7a66" }
+        "cursor-pointer text-center align-middle rounded pl-5 pr-5 pt-2 pb-2 h-auto",
+      staticStyle: { background: "#8f7a66" },
+      on: {
+        click: function($event) {
+          $event.stopPropagation()
+          $event.preventDefault()
+          return _vm.clicked($event)
+        }
+      }
     },
     [
       _c(
-        "span",
-        { staticClass: "font-semibold text-white text-lg" },
+        "a",
+        {
+          staticClass: "font-semibold text-white text-lg",
+          attrs: { href: "#" }
+        },
         [_vm._t("default")],
         2
       )

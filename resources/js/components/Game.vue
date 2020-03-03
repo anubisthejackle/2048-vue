@@ -10,9 +10,9 @@
         </div>
         <div class="flex items-center align-middle justify-between">
             <div class="text-lg">Join the numbers and get to the <span class="font-semibold">2048 tile!</span></div>
-            <new-game>New Game</new-game>
+            <new-game @clicked="newGame">New Game</new-game>
         </div>
-        <GameBoard />
+        <GameBoard :gameNumber="gameNumber" @updateScore="updateScore" />
         <div>
             <div><!-- HOW TO PLAY --></div>
             <hr />
@@ -34,7 +34,19 @@
         data() {
             return {
                 currentScore: 0,
-                bestScore: 16396
+                bestScore: 0,
+                gameNumber: 1
+            }
+        },
+        methods:{
+            newGame: function() {
+                this.gameNumber++;
+            },
+            updateScore: function(newScore) {
+                this.currentScore = newScore;
+                if(this.currentScore > this.bestScore){
+                    this.bestScore = this.currentScore;
+                }
             }
         }
     }

@@ -124,11 +124,87 @@
             font-size: 10px;
         }
     }
+@-webkit-keyframes pop {
+    0% {
+        -webkit-transform: scale(0);
+        -moz-transform: scale(0);
+        -ms-transform: scale(0);
+        transform: scale(0);
+    }
+
+    50% {
+        -webkit-transform: scale(1.2);
+        -moz-transform: scale(1.2);
+        -ms-transform: scale(1.2);
+        transform: scale(1.2);
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        -moz-transform: scale(1);
+        -ms-transform: scale(1);
+        transform: scale(1);
+    }
+}
+@-moz-keyframes pop {
+    0% {
+        -webkit-transform: scale(0);
+        -moz-transform: scale(0);
+        -ms-transform: scale(0);
+        transform: scale(0);
+    }
+
+    50% {
+        -webkit-transform: scale(1.2);
+        -moz-transform: scale(1.2);
+        -ms-transform: scale(1.2);
+        transform: scale(1.2);
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        -moz-transform: scale(1);
+        -ms-transform: scale(1);
+        transform: scale(1);
+    }
+}
+@keyframes pop {
+    0% {
+        -webkit-transform: scale(0);
+        -moz-transform: scale(0);
+        -ms-transform: scale(0);
+        transform: scale(0);
+    }
+
+    50% {
+        -webkit-transform: scale(1.2);
+        -moz-transform: scale(1.2);
+        -ms-transform: scale(1.2);
+        transform: scale(1.2);
+    }
+
+    100% {
+        -webkit-transform: scale(1);
+        -moz-transform: scale(1);
+        -ms-transform: scale(1);
+        transform: scale(1);
+    }
+}
+    .tile-merged .tile-inner {
+        z-index: 20;
+        -webkit-animation: pop 200ms ease 100ms;
+        -moz-animation: pop 200ms ease 100ms;
+        animation: pop 200ms ease 100ms;
+        -webkit-animation-fill-mode: backwards;
+        -moz-animation-fill-mode: backwards;
+        animation-fill-mode: backwards;
+    }
+
 </style>
 
 <script>
     export default {
-        props: ['tileValue', 'tileColumn', 'tileRow'],
+        props: ['tileValue', 'tileColumn', 'tileRow','merged'],
         computed: {
             tilePosition() {
                 // This is where we compute the tile position style and pass it dynamically to the inline style
@@ -140,7 +216,11 @@
             },
 
             dynamicClass() {
-                return "tile-" + this.tileValue;
+                var cssClass = "tile-" + this.tileValue;
+                if(this.merged == true){
+                    cssClass = cssClass + " tile-merged";
+                }
+                return cssClass;
             }
         }
     }

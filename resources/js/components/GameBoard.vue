@@ -6,12 +6,13 @@
             <grid-row v-for="(x,index) in 4" :key="index" />
         </div>
         <div class="tile-container">
-            <tile v-for="(tile,index) in tileObjs" :key="index" :tileValue="tile.value" :tileColumn="tile.column" :tileRow="tile.row"></tile>
+            <tile v-for="(tile,index) in tileObjs" :key="index" :tileValue="tile.value" :tileColumn="tile.column" :tileRow="tile.row" :merged="tile.merged"></tile>
         </div>
-        <Keypress v-if="gameOver == false" :key-code="38" event="keyup" @pressed="moveUp" />
+        <!-- <Keypress v-if="gameOver == false" :key-code="38" event="keyup" @pressed="moveUp" />
         <Keypress v-if="gameOver == false" :key-code="37" event="keyup" @pressed="moveLeft" />
         <Keypress v-if="gameOver == false" :key-code="39" event="keyup" @pressed="moveRight" />
-        <Keypress v-if="gameOver == false" :key-code="40" event="keyup" @pressed="moveDown" />
+        <Keypress v-if="gameOver == false" :key-code="40" event="keyup" @pressed="moveDown" /> -->
+        <Keypress v-if="gameOver == false" event="keyup" @pressed="handleKeypress" />
     </div>
 </template>
 
@@ -58,6 +59,7 @@ export default {
         'tile': Tile,
         Keypress: () => import('vue-keypress')
     },
+    props:['gameNumber'],
     data() {
         return {
             tileObjs: [
@@ -68,7 +70,8 @@ export default {
                     [0,0,0,0],
                     [0,0,0,0]
            ],
-           gameOver: false
+           gameOver: false,
+           currentScore: 0
         }
     },
     mounted() {
@@ -77,7 +80,7 @@ export default {
     },
     methods:{
         moveLeft: function(){
-            console.log("Left Arrow Pressed");
+            // console.log("Left Arrow Pressed");
             var moved, everMoved = false;
             var tileRow;
             do{
@@ -123,7 +126,10 @@ export default {
                             }, {row: (rowIndex+1), column: (colIndex)});
 
                             this.tileObjs[collider].column--;
+                            this.tileObjs[collider].merged=true;
                             this.tileObjs[collider].value *= 2;
+
+                            this.currentScore += this.tileObjs[collider].value;
 
                             this.tileObjs[collided].value = 0;
 
@@ -193,7 +199,9 @@ export default {
                             }, {row: (rowIndex+1), column: (colIndex+2)});
 
                             this.tileObjs[collider].column++;
+                            this.tileObjs[collider].merged=true;
                             this.tileObjs[collider].value *= 2;
+                            this.currentScore += this.tileObjs[collider].value;
 
                             this.tileObjs[collided].value = 0;
 
@@ -270,7 +278,9 @@ export default {
                             }, {row: (rowIndex), column: (colIndex+1)});
 
                             this.tileObjs[collider].row--;
+                            this.tileObjs[collider].merged=true;
                             this.tileObjs[collider].value *= 2;
+                            this.currentScore += this.tileObjs[collider].value;
 
                             this.tileObjs[collided].value = 0;
 
@@ -347,7 +357,9 @@ export default {
                             }, {row: (rowIndex+2), column: (colIndex+1)});
 
                             this.tileObjs[collider].row++;
+                            this.tileObjs[collider].merged=true;
                             this.tileObjs[collider].value *= 2;
+                            this.currentScore += this.tileObjs[collider].value;
 
                             this.tileObjs[collided].value = 0;
 
@@ -387,7 +399,7 @@ export default {
             var randomItem = empties[Math.floor(Math.random()*empties.length)];
             var value = Math.random() < 0.9 ? 2 : 4;
             this.$set(this.tiles[randomItem.row], randomItem.column, value);
-            this.$set(this.tileObjs, this.tileObjs.length, {value: value, column:(randomItem.column+1), row:(randomItem.row+1)});
+            this.$set(this.tileObjs, this.tileObjs.length, {value: value, column:(randomItem.column+1), row:(randomItem.row+1), merged: false});
             this.checkForGameOver();
         },
         checkForGameOver:function() {
@@ -428,6 +440,48 @@ export default {
                 }
             }
             return false;
+        },
+        handleKeypress: function(keyCode){
+            if(keyCode < 37 || keyCode > 40){
+                return;
+            }
+
+
+            if( keyCode==38 ){
+                this.moveUp();
+            }
+            if( keyCode==37 ){
+                this.moveLeft();
+            }
+            if( keyCode==39 ){
+                this.moveRight();
+            }
+            if( keyCode==40 ){
+                this.moveDown();
+            }
+
+            this.tileObjs.map(function(tile){
+                tile.merged = false;
+            })
+        }
+    },
+    watch:{
+        gameNumber: function(newVal,oldVal){
+            this.tileObjs = [];
+            this.tiles = [
+                    [0,0,0,0],
+                    [0,0,0,0],
+                    [0,0,0,0],
+                    [0,0,0,0]
+           ];
+           this.gameOver = false;
+           this.currentScore = 0;
+           this.generateRandomTile();
+           this.generateRandomTile();
+
+        },
+        currentScore: function(newVal,oldVal){
+            this.$emit('updateScore', newVal);
         }
     }
 }
