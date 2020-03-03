@@ -121,6 +121,11 @@ export default {
                                 return tile.row == this.row && tile.column == this.column && tile.value > 0
                             }, {row: (rowIndex+1), column: (colIndex)});
 
+                            if( this.tileObjs[collider].merged == true || this.tileObjs[collided].merged == true ){
+                                // We have already merged this tile, or the one it was supposed to merge into.
+                                continue;
+                            }
+
                             this.tileObjs[collider].column--;
                             this.tileObjs[collider].merged=true;
                             this.tileObjs[collider].value *= 2;
@@ -193,6 +198,11 @@ export default {
                             let collided = this.tileObjs.findIndex(function(tile){
                                 return tile.row == this.row && tile.column == this.column && tile.value > 0
                             }, {row: (rowIndex+1), column: (colIndex+2)});
+
+                            if( this.tileObjs[collider].merged == true || this.tileObjs[collided].merged == true ){
+                                // We have already merged this tile, or the one it was supposed to merge into.
+                                continue;
+                            }
 
                             this.tileObjs[collider].column++;
                             this.tileObjs[collider].merged=true;
@@ -273,6 +283,11 @@ export default {
                                 return tile.row == this.row && tile.column == this.column && tile.value > 0
                             }, {row: (rowIndex), column: (colIndex+1)});
 
+                            if( this.tileObjs[collider].merged == true || this.tileObjs[collided].merged == true ){
+                                // We have already merged this tile, or the one it was supposed to merge into.
+                                continue;
+                            }
+
                             this.tileObjs[collider].row--;
                             this.tileObjs[collider].merged=true;
                             this.tileObjs[collider].value *= 2;
@@ -351,6 +366,11 @@ export default {
                             let collided = this.tileObjs.findIndex(function(tile){
                                 return tile.row == this.row && tile.column == this.column && tile.value > 0
                             }, {row: (rowIndex+2), column: (colIndex+1)});
+
+                            if( this.tileObjs[collider].merged == true || this.tileObjs[collided].merged == true ){
+                                // We have already merged this tile, or the one it was supposed to merge into.
+                                continue;
+                            }
 
                             this.tileObjs[collider].row++;
                             this.tileObjs[collider].merged=true;
