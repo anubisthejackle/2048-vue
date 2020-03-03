@@ -142,17 +142,6 @@
             dynamicClass() {
                 return "tile-" + this.tileValue;
             }
-        },
-        watch: {
-            tileValue: function(newVal, oldVal){
-                console.log("Tile Value changed from " + oldVal + " to " + newVal);
-            },
-            tileColumn: function(newVal, oldVal){
-                console.log("Tile Column changed from " + oldVal + " to " + newVal);
-            },
-            tileRow: function(newVal, oldVal){
-                console.log("Tile Row changed from " + oldVal + " to " + newVal);
-            }
         }
     }
 </script>

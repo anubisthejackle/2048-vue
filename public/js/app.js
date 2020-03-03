@@ -2159,7 +2159,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
   },
   methods: {
     moveLeft: function moveLeft() {
-      console.log("Left Arrow Pressed");
+      // console.log("Left Arrow Pressed");
       var moved,
           everMoved = false;
       var tileRow;
@@ -2258,7 +2258,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       }
     },
     moveRight: function moveRight() {
-      console.log("Right Arrow Pressed");
+      // console.log("Right Arrow Pressed");
       var moved,
           everMoved = false;
       var tileRow;
@@ -2336,12 +2336,11 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       }
     },
     moveUp: function moveUp() {
-      console.log("Up Arrow Pressed");
+      // console.log("Up Arrow Pressed");
       var moved,
           everMoved = false;
       var tileRow;
       var tiles = this.tiles;
-      console.log(tiles);
 
       do {
         moved = false; // We're going top to bottom, so we want to move the things closest
@@ -2420,12 +2419,11 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       }
     },
     moveDown: function moveDown() {
-      console.log("Down Arrow Pressed");
+      // console.log("Down Arrow Pressed");
       var moved,
           everMoved = false;
       var tileRow;
       var tiles = this.tiles;
-      console.log(tiles);
 
       do {
         moved = false; // We're going top to bottom, so we want to move the things closest
@@ -2436,7 +2434,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
           // Now we have a row to work with, so let's iterate over the columns.
           // The order of these doesn't matter much.
           for (var colIndex = 0; colIndex < 4; colIndex++) {
-            console.log(colIndex);
             var tile = tiles[rowIndex][colIndex]; // We can't move the third row, so we skip it
             // We could do this by starting the loop lower.
 
@@ -2519,7 +2516,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       }
 
       if (empties.length == 0) {
-        // END OF THE GAME
+        this.checkForGameOver();
         return;
       }
 
@@ -2531,6 +2528,45 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         column: randomItem.column + 1,
         row: randomItem.row + 1
       });
+      this.checkForGameOver();
+    },
+    checkForGameOver: function checkForGameOver() {
+      if (!this.moveAvailable()) {
+        // Game over!
+        console.log("Game Over");
+      }
+    },
+    moveAvailable: function moveAvailable() {
+      for (var row = 0; row < 4; row++) {
+        for (var column = 0; column < 4; column++) {
+          // Found tile is empty
+          if (this.tiles[row][column] == 0) {
+            return true;
+          } // Can move up
+
+
+          if (row > 0 && (this.tiles[row - 1][column] == 0 || this.tiles[row - 1][column] == this.tiles[row][column])) {
+            return true;
+          } // Can move Down
+
+
+          if (row < 3 && (this.tiles[row + 1][column] == 0 || this.tiles[row + 1][column] == this.tiles[row][column])) {
+            return true;
+          } // Can move right
+
+
+          if (column < 3 && (this.tiles[row][column + 1] == 0 || this.tiles[row][column + 1] == this.tiles[row][column])) {
+            return true;
+          } // Can move Left
+
+
+          if (column > 0 && (this.tiles[row][column - 1] == 0 || this.tiles[row][column - 1] == this.tiles[row][column])) {
+            return true;
+          }
+        }
+      }
+
+      return false;
     }
   }
 });
@@ -2825,17 +2861,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     dynamicClass: function dynamicClass() {
       return "tile-" + this.tileValue;
-    }
-  },
-  watch: {
-    tileValue: function tileValue(newVal, oldVal) {
-      console.log("Tile Value changed from " + oldVal + " to " + newVal);
-    },
-    tileColumn: function tileColumn(newVal, oldVal) {
-      console.log("Tile Column changed from " + oldVal + " to " + newVal);
-    },
-    tileRow: function tileRow(newVal, oldVal) {
-      console.log("Tile Row changed from " + oldVal + " to " + newVal);
     }
   }
 });

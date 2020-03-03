@@ -76,7 +76,7 @@ export default {
     },
     methods:{
         moveLeft: function(){
-            console.log("Left Arrow Pressed");
+            // console.log("Left Arrow Pressed");
             var moved, everMoved = false;
             var tileRow;
             do{
@@ -143,7 +143,7 @@ export default {
             }
         },
         moveRight: function(){
-            console.log("Right Arrow Pressed");
+            // console.log("Right Arrow Pressed");
             var moved, everMoved = false;
             var tileRow;
 
@@ -212,11 +212,11 @@ export default {
             }
         },
         moveUp: function(){
-            console.log("Up Arrow Pressed");
+            // console.log("Up Arrow Pressed");
             var moved, everMoved = false;
             var tileRow;
             var tiles = this.tiles;
-            console.log(tiles);
+
             do{
                 moved = false;
                 // We're going top to bottom, so we want to move the things closest
@@ -292,11 +292,11 @@ export default {
             }
         },
         moveDown: function(){
-            console.log("Down Arrow Pressed");
+            // console.log("Down Arrow Pressed");
             var moved, everMoved = false;
             var tileRow;
             var tiles = this.tiles;
-            console.log(tiles);
+
             do{
                 moved = false;
                 // We're going top to bottom, so we want to move the things closest
@@ -306,7 +306,7 @@ export default {
                     // Now we have a row to work with, so let's iterate over the columns.
                     // The order of these doesn't matter much.
                     for(let colIndex = 0; colIndex < 4; colIndex++){
-                        console.log(colIndex)
+
                         let tile = tiles[rowIndex][colIndex];
 
                         // We can't move the third row, so we skip it
@@ -380,13 +380,52 @@ export default {
             }
 
             if(empties.length == 0){
-                // END OF THE GAME
+                this.checkForGameOver();
                 return;
             }
             var randomItem = empties[Math.floor(Math.random()*empties.length)];
             var value = Math.random() < 0.9 ? 2 : 4;
             this.$set(this.tiles[randomItem.row], randomItem.column, value);
             this.$set(this.tileObjs, this.tileObjs.length, {value: value, column:(randomItem.column+1), row:(randomItem.row+1)});
+            this.checkForGameOver();
+        },
+        checkForGameOver:function() {
+            if(!this.moveAvailable()){
+                // Game over!
+                console.log("Game Over");
+            }
+        },
+        moveAvailable:function() {
+            for(var row=0; row<4; row++){
+                for(var column=0; column<4; column++){
+                    // Found tile is empty
+                    if(this.tiles[row][column] == 0){
+                        return true;
+                    }
+
+                    // Can move up
+                    if(row > 0 && (this.tiles[row-1][column] == 0 || this.tiles[row-1][column] == this.tiles[row][column])){
+                        return true;
+                    }
+
+                    // Can move Down
+                    if(row < 3 && (this.tiles[row+1][column] == 0 || this.tiles[row+1][column] == this.tiles[row][column])){
+                        return true;
+                    }
+
+                    // Can move right
+                    if(column < 3 && (this.tiles[row][column+1] == 0 || this.tiles[row][column+1] == this.tiles[row][column])){
+                        return true;
+                    }
+
+                    // Can move Left
+                    if(column > 0 && (this.tiles[row][column-1] == 0 || this.tiles[row][column-1] == this.tiles[row][column])){
+                        return true;
+                    }
+
+                }
+            }
+            return false;
         }
     }
 }
