@@ -462,7 +462,6 @@ export default {
                 return;
             }
 
-
             if( keyCode==38 ){
                 this.moveUp();
             }
@@ -479,6 +478,7 @@ export default {
             this.tileObjs.map(function(tile){
                 tile.merged = false;
             })
+
         }
     },
     watch:{
