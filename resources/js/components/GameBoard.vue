@@ -8,10 +8,6 @@
         <div class="tile-container">
             <tile v-for="(tile,index) in tileObjs" :key="index" :tileValue="tile.value" :tileColumn="tile.column" :tileRow="tile.row" :merged="tile.merged"></tile>
         </div>
-        <!-- <Keypress v-if="gameOver == false" :key-code="38" event="keyup" @pressed="moveUp" />
-        <Keypress v-if="gameOver == false" :key-code="37" event="keyup" @pressed="moveLeft" />
-        <Keypress v-if="gameOver == false" :key-code="39" event="keyup" @pressed="moveRight" />
-        <Keypress v-if="gameOver == false" :key-code="40" event="keyup" @pressed="moveDown" /> -->
         <Keypress v-if="gameOver == false" event="keyup" @pressed="handleKeypress" />
     </div>
 </template>
