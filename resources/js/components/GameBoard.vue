@@ -1,7 +1,6 @@
 <template>
     <div class="game-container">
-        <!-- Game Message -->
-        <div></div>
+        <GameOver :gameOver="gameOver" />
         <div class="grid-container">
             <grid-row v-for="(x,index) in 4" :key="index" />
         </div>
@@ -53,7 +52,8 @@ export default {
     components: {
         'grid-row': GridRow,
         'tile': Tile,
-        Keypress: () => import('vue-keypress')
+        Keypress: () => import('vue-keypress'),
+        GameOver: () => import('./GameOver.vue')
     },
     props:['gameNumber'],
     data() {

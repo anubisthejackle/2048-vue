@@ -2146,7 +2146,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 //
 //
 //
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2155,6 +2154,9 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     'tile': _Tile_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     Keypress: function Keypress() {
       return __webpack_require__.e(/*! import() */ 0).then(__webpack_require__.t.bind(null, /*! vue-keypress */ "./node_modules/vue-keypress/dist/Keypress.umd.js", 7));
+    },
+    GameOver: function GameOver() {
+      return __webpack_require__.e(/*! import() */ 1).then(__webpack_require__.bind(null, /*! ./GameOver.vue */ "./resources/js/components/GameOver.vue"));
     }
   },
   props: ['gameNumber'],
@@ -39336,7 +39338,7 @@ var render = function() {
     "div",
     { staticClass: "game-container" },
     [
-      _c("div"),
+      _c("GameOver", { attrs: { gameOver: _vm.gameOver } }),
       _vm._v(" "),
       _c(
         "div",
