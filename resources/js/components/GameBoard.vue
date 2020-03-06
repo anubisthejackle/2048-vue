@@ -1,6 +1,6 @@
 <template>
     <div class="game-container">
-        <GameOver :gameOver="gameOver" />
+        <GameOver :gameOver="gameOver" :gameWon="gameWon" />
         <div class="grid-container">
             <grid-row v-for="(x,index) in 4" :key="index" />
         </div>
@@ -59,14 +59,39 @@ export default {
     data() {
         return {
             tileObjs: [
+                {
+                    value: 1024,
+                    column: 3,
+                    row: 1,
+                    merged: false
+                },
+                {
+                    value: 1024,
+                    column: 4,
+                    row: 1,
+                    merged: false
+                },
+                {
+                    value: 2,
+                    column: 3,
+                    row: 2,
+                    merged: false
+                },
+                {
+                    value: 2,
+                    column: 4,
+                    row: 2,
+                    merged: false
+                }
             ],
             tiles: [
-                    [0,0,0,0],
-                    [0,0,0,0],
+                    [0,0,1024,1024],
+                    [0,0,2,2],
                     [0,0,0,0],
                     [0,0,0,0]
            ],
            gameOver: false,
+           gameWon: false,
            currentScore: 0
         }
     },
@@ -419,6 +444,16 @@ export default {
             this.checkForGameOver();
         },
         checkForGameOver:function() {
+            let winTile = this.tileObjs.findIndex(function(tile){
+                return tile.value == 2048;
+            });
+
+            if(winTile > -1){
+                console.log("Game WON");
+                this.gameWon = true;
+                this.gameOver = true;
+            }
+
             if(!this.moveAvailable()){
                 // Game over!
                 console.log("Game Over");
@@ -491,6 +526,7 @@ export default {
                     [0,0,0,0]
            ];
            this.gameOver = false;
+           this.gameWon = false;
            this.currentScore = 0;
            this.generateRandomTile();
            this.generateRandomTile();

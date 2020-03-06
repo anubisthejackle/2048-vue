@@ -2153,18 +2153,39 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     'grid-row': _GridRow_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     'tile': _Tile_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     Keypress: function Keypress() {
-      return __webpack_require__.e(/*! import() */ 0).then(__webpack_require__.t.bind(null, /*! vue-keypress */ "./node_modules/vue-keypress/dist/Keypress.umd.js", 7));
+      return __webpack_require__.e(/*! import() */ 1).then(__webpack_require__.t.bind(null, /*! vue-keypress */ "./node_modules/vue-keypress/dist/Keypress.umd.js", 7));
     },
     GameOver: function GameOver() {
-      return __webpack_require__.e(/*! import() */ 1).then(__webpack_require__.bind(null, /*! ./GameOver.vue */ "./resources/js/components/GameOver.vue"));
+      return __webpack_require__.e(/*! import() */ 0).then(__webpack_require__.bind(null, /*! ./GameOver.vue */ "./resources/js/components/GameOver.vue"));
     }
   },
   props: ['gameNumber'],
   data: function data() {
     return {
-      tileObjs: [],
-      tiles: [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+      tileObjs: [{
+        value: 1024,
+        column: 3,
+        row: 1,
+        merged: false
+      }, {
+        value: 1024,
+        column: 4,
+        row: 1,
+        merged: false
+      }, {
+        value: 2,
+        column: 3,
+        row: 2,
+        merged: false
+      }, {
+        value: 2,
+        column: 4,
+        row: 2,
+        merged: false
+      }],
+      tiles: [[0, 0, 1024, 1024], [0, 0, 2, 2], [0, 0, 0, 0], [0, 0, 0, 0]],
       gameOver: false,
+      gameWon: false,
       currentScore: 0
     };
   },
@@ -2579,6 +2600,16 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       this.checkForGameOver();
     },
     checkForGameOver: function checkForGameOver() {
+      var winTile = this.tileObjs.findIndex(function (tile) {
+        return tile.value == 2048;
+      });
+
+      if (winTile > -1) {
+        console.log("Game WON");
+        this.gameWon = true;
+        this.gameOver = true;
+      }
+
       if (!this.moveAvailable()) {
         // Game over!
         console.log("Game Over");
@@ -2648,6 +2679,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       this.tileObjs = [];
       this.tiles = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
       this.gameOver = false;
+      this.gameWon = false;
       this.currentScore = 0;
       this.generateRandomTile();
       this.generateRandomTile();
@@ -39338,7 +39370,9 @@ var render = function() {
     "div",
     { staticClass: "game-container" },
     [
-      _c("GameOver", { attrs: { gameOver: _vm.gameOver } }),
+      _c("GameOver", {
+        attrs: { gameOver: _vm.gameOver, gameWon: _vm.gameWon }
+      }),
       _vm._v(" "),
       _c(
         "div",
@@ -51749,12 +51783,6 @@ var app = new Vue({
   el: '#app',
   data: {}
 });
-window.addEventListener("keydown", function (e) {
-  // space and arrow keys
-  if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
-    e.preventDefault();
-  }
-}, false);
 
 /***/ }),
 

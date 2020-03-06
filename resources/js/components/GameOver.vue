@@ -1,7 +1,10 @@
 <template>
     <transition name="fade" :duration="500">
-        <div v-if="gameOver" class="flex items-center justify-center text-center absolute top-0 left-0 z-50 bg-white w-full opacity-75 h-full">
+        <div v-if="gameOver && !gameWon" class="flex items-center justify-center text-center absolute top-0 left-0 z-50 bg-white w-full opacity-75 h-full">
             <div class="text-3xl font-bold">Game Over</div>
+        </div>
+        <div v-if="gameOver && gameWon" class="flex items-center justify-center text-center absolute top-0 left-0 z-50 bg-white w-full opacity-75 h-full">
+            <div class="text-3xl font-bold">Game Won</div>
         </div>
     </transition>
 </template>
@@ -17,6 +20,6 @@
 
 <script>
     export default {
-        props:['gameOver']
+        props:['gameOver','gameWon']
     }
 </script>
