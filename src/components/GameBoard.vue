@@ -467,20 +467,20 @@ export default {
             return false;
         },
         handleKeypress: function(keyCode){
-            if(keyCode < 37 || keyCode > 40){
+            if([37,38,39,40,65,68,83,87].indexOf(keyCode) < 0){
                 return;
             }
 
-            if( keyCode==38 ){
+            if( keyCode==38 || keyCode==87){
                 this.moveUp();
             }
-            if( keyCode==37 ){
+            if( keyCode==37 || keyCode==65 ){
                 this.moveLeft();
             }
-            if( keyCode==39 ){
+            if( keyCode==39 || keyCode==68){
                 this.moveRight();
             }
-            if( keyCode==40 ){
+            if( keyCode==40 || keyCode==83){
                 this.moveDown();
             }
 
