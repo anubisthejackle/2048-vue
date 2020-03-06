@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "core-js": "^3.6.4",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-keypress": "^1.1.0"
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^2.1.0",
