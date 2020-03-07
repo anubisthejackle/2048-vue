@@ -1,5 +1,11 @@
 <template>
-    <div class="game-container">
+    <div
+        v-touch:swipe.left="swipeLeft"
+        v-touch:swipe.right="swipeRight"
+        v-touch:swipe.top="swipeUp"
+        v-touch:swipe.bottom="swipeDown"
+        class="game-container"
+        >
         <GameOver :gameOver="gameOver" :gameWon="gameWon" />
         <div class="grid-container">
             <grid-row v-for="(x,index) in 4" :key="index" />
@@ -488,7 +494,36 @@ export default {
                 tile.merged = false;
             })
 
-        }
+        },
+        swipeLeft: function() {
+            this.moveLeft();
+
+            this.tileObjs.map(function(tile){
+                tile.merged = false;
+            });
+        },
+        swipeRight: function() {
+            this.moveRight();
+
+            this.tileObjs.map(function(tile){
+                tile.merged = false;
+            });
+        },
+        swipeUp: function() {
+            this.moveUp();
+
+            this.tileObjs.map(function(tile){
+                tile.merged = false;
+            });
+        },
+        swipeDown: function() {
+            this.moveDown();
+
+            this.tileObjs.map(function(tile){
+                tile.merged = false;
+            });
+        },
+
     },
     watch:{
         gameNumber: function(){

@@ -10,7 +10,8 @@
   "dependencies": {
     "core-js": "^3.6.4",
     "vue": "^2.6.11",
-    "vue-keypress": "^1.1.0"
+    "vue-keypress": "^1.1.0",
+    "vue2-touch-events": "^2.2.1"
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^2.1.0",
